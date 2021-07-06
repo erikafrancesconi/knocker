@@ -27,13 +27,13 @@ const Layout = ({ children }) => {
                 <div className="flex items-center">
                   <div className="flex-shrink-0">
                     <img
-                      className="h-8 w-8"
-                      src="https://tailwindui.com/img/logos/workflow-mark-indigo-500.svg"
-                      alt="Workflow"
+                      className="h-11 w-11"
+                      src="/images/docker.svg"
+                      alt="Knocker"
                     />
                   </div>
                   <div className="hidden md:block">
-                    <div className="ml-10 flex items-baseline space-x-4">
+                    <div className="ml-6 flex items-baseline space-x-4">
                       {navigation.map((item, itemIdx) =>
                         itemIdx === 0 ? (
                           <Fragment key={item}>

@@ -1,7 +1,14 @@
-import '../styles/globals.css'
+import "../styles/globals.css";
+import { ToastProvider } from "react-toast-notifications";
 
-function MyApp({ Component, pageProps }) {
-  return <Component {...pageProps} />
-}
+import Toast from "components/Toast";
 
-export default MyApp
+const App = ({ Component, pageProps }) => {
+  return (
+    <ToastProvider components={{ Toast }} placement="top-center" autoDismiss>
+      <Component {...pageProps} />
+    </ToastProvider>
+  );
+};
+
+export default App;
