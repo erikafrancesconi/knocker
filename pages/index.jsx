@@ -14,7 +14,7 @@ export default function Home({ headers, data }) {
     router.replace(router.asPath);
   };
 
-  const stopContainer = async (containerId) => {
+  const stopContainer = async (containerId, containerName) => {
     containerId = containerId.trim();
 
     try {
@@ -28,7 +28,7 @@ export default function Home({ headers, data }) {
 
       const { result } = await res.json();
       if (result.replaceAll("\n", "") === containerId) {
-        addToast(`Container ${containerId} stopped.`, {
+        addToast(`Container ${containerName} stopped.`, {
           appearance: "success",
         });
         refreshData();
@@ -72,6 +72,7 @@ export default function Home({ headers, data }) {
               <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-gray-50">
                   <tr>
+                    <th></th>
                     {headers.length > 0 &&
                       headers.map((h, idx) => (
                         <th
@@ -91,32 +92,29 @@ export default function Home({ headers, data }) {
                   {data.length > 0 &&
                     data.map((d, idx) => (
                       <tr key={idx}>
+                        <td className="px-4 py-2 align-top">
+                          {d[3].trim().startsWith("Up") ? (
+                            <span className="rounded-full h-6 w-6 flex items-center justify-center bg-green-400"></span>
+                          ) : (
+                            <span className="rounded-full h-6 w-6 flex items-center justify-center bg-yellow-400"></span>
+                          )}
+                        </td>
                         {d.map((cell, idx) => (
                           <td
                             key={idx}
-                            className="px-6 py-4 text-sm text-gray-800"
-                          >
-                            {cell}
-                          </td>
+                            className="px-6 py-2 text-sm text-gray-800 align-top"
+                            dangerouslySetInnerHTML={{
+                              __html: cell.trim(),
+                            }}
+                          ></td>
                         ))}
-                        <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                        <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium align-top">
                           <button
-                            className="bg-red-700 hover:bg-red-500 rounded-md inline-flex items-center p-1"
+                            className="bg-red-700 hover:bg-red-500 rounded-md inline-flex items-center py-1 px-2 text-white"
                             title="Stop"
-                            onClick={() => stopContainer(d[0])}
+                            onClick={() => stopContainer(d[0], d[5])}
                           >
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              className="h-5 w-5"
-                              viewBox="0 0 20 20"
-                              fill="white"
-                            >
-                              <path
-                                fillRule="evenodd"
-                                d="M10 18a8 8 0 100-16 8 8 0 000 16zM8 7a1 1 0 00-1 1v4a1 1 0 001 1h4a1 1 0 001-1V8a1 1 0 00-1-1H8z"
-                                clipRule="evenodd"
-                              />
-                            </svg>
+                            Stop
                           </button>
                         </td>
                       </tr>
@@ -144,8 +142,17 @@ export const getServerSideProps = async (context) => {
       .filter((row) => row.length > 0);
 
     headers = rows[0];
+    headers.splice(2, 1); // Command is useless
+
     data = rows.filter((row, idx) => idx > 0);
-    data.forEach((d) => console.log(d.length));
+    data.forEach((d) => {
+      if (!d[4].trim().startsWith("Up") || d.length < 7) {
+        // Inserting white element for ports if process is not up
+        d.splice(5, 0, "");
+      }
+      d[5] = d[5].split(",").join("<br />");
+      d.splice(2, 1); // Command is useless
+    });
   } catch (err) {
     console.errror(err);
   }
