@@ -16,7 +16,6 @@ const up = async (req, res) => {
           res.status(500).end(error.message);
           return resolve();
         }
-        console.log("Ho finito");
         res.end("OK");
         return resolve();
       }
@@ -39,11 +38,9 @@ const up = async (req, res) => {
     // });
 
     process.stdout.on("data", (data) => {
-      console.log("stdout", data);
       res.write(data);
     });
     process.stderr.on("data", (data) => {
-      console.log("stderr", data);
       res.write(data);
     });
   });

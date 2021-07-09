@@ -36,9 +36,7 @@ const Configurations = ({ data }) => {
           break;
         }
         setModalContent((oldContent) => [...oldContent, value]);
-        console.log("Received", value);
       }
-      console.log("Ho finito");
 
       // const { result } = await res.json();
       // console.log("Result", result);
@@ -115,14 +113,14 @@ const Configurations = ({ data }) => {
 
                       return (
                         <tr key={idx}>
-                          <td className="px-6 py-2 text-sm text-gray-800 align-top">
+                          <td className="px-6 py-2 text-sm text-gray-800">
                             {name}
                           </td>
-                          <td className="px-6 py-2 text-sm text-gray-800 align-top">
+                          <td className="px-6 py-2 text-sm text-gray-800">
                             {filepath}
                           </td>
 
-                          <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium align-top">
+                          <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                             <button
                               className="bg-green-700 hover:bg-green-500 rounded-md inline-flex items-center py-1 px-2 text-white"
                               title="Stop"
@@ -157,7 +155,7 @@ export const getStaticProps = async () => {
   });
 
   try {
-    const text = "SELECT * FROM configurations";
+    const text = "SELECT * FROM configurations ORDER BY name";
     const resp = await client.query(text);
     data = resp.rows;
   } catch (err) {
