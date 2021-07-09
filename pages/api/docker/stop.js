@@ -1,6 +1,6 @@
 import { execute } from "utils/server/process";
 
-export default async (req, res) => {
+const stop = async (req, res) => {
   const { containerId } = req.body;
 
   try {
@@ -10,3 +10,5 @@ export default async (req, res) => {
     return res.status(500).json({ error: err });
   }
 };
+
+export default stop;

@@ -1,18 +1,52 @@
 import { dirname } from "path";
-import { spawn } from "child_process";
+import { exec } from "child_process";
 
-export default async (req, res) => {
+const up = async (req, res) => {
   const { filepath } = req.body;
   const folder = dirname(filepath);
 
-  try {
-    spawn("docker-compose", ["up"], {
-      cwd: folder,
-      detached: true,
-    });
+  return new Promise((resolve) => {
+    const process = exec(
+      "docker-compose up -d",
+      {
+        cwd: folder,
+      },
+      (error) => {
+        if (error) {
+          res.status(500).end(error.message);
+          return resolve();
+        }
+        console.log("Ho finito");
+        res.end("OK");
+        return resolve();
+      }
+    );
 
-    return res.status(200).json({ result: "OK" });
-  } catch (err) {
-    return res.status(500).json({ error: err });
-  }
+    // Questi tre sono gestiti dalla callback
+    // process.on("close", (code) => {
+    //   console.log(`child process close all stdio with code ${code}`);
+    // });
+    // process.on("error", (err) => {
+    //   console.error(`child process crashed with error ${err}`);
+    // });
+    // process.on("exit", (code, signal) => {
+    //   console.error(`child process exited with code ${code}: ${signal}`);
+    // });
+
+    // Never fired?
+    // process.on("message", (message) => {
+    //   console.log("message", message);
+    // });
+
+    process.stdout.on("data", (data) => {
+      console.log("stdout", data);
+      res.write(data);
+    });
+    process.stderr.on("data", (data) => {
+      console.log("stderr", data);
+      res.write(data);
+    });
+  });
 };
+
+export default up;

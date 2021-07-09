@@ -1,5 +1,6 @@
 import React from "react";
 import { useRouter } from "next/router";
+import Image from "next/image";
 
 import { Disclosure } from "@headlessui/react";
 import { MenuIcon, XIcon } from "@heroicons/react/outline";
@@ -15,10 +16,11 @@ const Nav = ({ navigation }) => {
             <div className="flex items-center justify-between h-16">
               <div className="flex items-center">
                 <div className="flex-shrink-0">
-                  <img
-                    className="h-11 w-11"
+                  <Image
                     src="/images/docker.svg"
                     alt="Knocker"
+                    width={44}
+                    height={44}
                   />
                 </div>
                 <div className="hidden md:block">

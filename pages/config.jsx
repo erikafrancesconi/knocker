@@ -1,15 +1,24 @@
 import Layout from "components/Layout";
-import React from "react";
+import React, { useState } from "react";
 
 import { useToasts } from "react-toast-notifications";
 
 import { connect } from "db";
+import Modal from "components/Modal";
 
 const Configurations = ({ data }) => {
   const { addToast } = useToasts();
 
-  const runConfiguration = async (filepath, compose) => {
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalContent, setModalContent] = useState([]);
+  const [modalTitle, setModalTitle] = useState("");
+
+  const runConfiguration = async (name, filepath, compose) => {
     const api = `/api/docker/${compose ? "compose/up" : ""}`;
+
+    setModalTitle(name);
+    setModalContent([]);
+    setModalOpen(true);
 
     try {
       const res = await fetch(api, {
@@ -19,14 +28,26 @@ const Configurations = ({ data }) => {
           "Content-Type": "application/json",
         },
       });
+      const reader = res.body.pipeThrough(new TextDecoderStream()).getReader();
 
-      const { result } = await res.json();
-
-      if (result === "OK") {
-        addToast("Command launched.", {
-          appearance: "success",
-        });
+      while (true) {
+        const { value, done } = await reader.read();
+        if (done) {
+          break;
+        }
+        setModalContent((oldContent) => [...oldContent, value]);
+        console.log("Received", value);
       }
+      console.log("Ho finito");
+
+      // const { result } = await res.json();
+      // console.log("Result", result);
+
+      // if (result === "OK") {
+      //   addToast("Command launched.", {
+      //     appearance: "success",
+      //   });
+      // }
     } catch (err) {
       addToast("Something went wrong.", {
         appearance: "error",
@@ -36,6 +57,13 @@ const Configurations = ({ data }) => {
 
   return (
     <Layout>
+      <Modal
+        onClose={() => setModalOpen(false)}
+        show={modalOpen}
+        title={modalTitle}
+      >
+        {modalContent}
+      </Modal>
       <h2 className="text-2xl font-bold text-gray-800 pb-4 flex justify-between">
         Saved configurations
         <button
@@ -99,7 +127,7 @@ const Configurations = ({ data }) => {
                               className="bg-green-700 hover:bg-green-500 rounded-md inline-flex items-center py-1 px-2 text-white"
                               title="Stop"
                               onClick={() =>
-                                runConfiguration(filepath, compose)
+                                runConfiguration(name, filepath, compose)
                               }
                             >
                               Run
