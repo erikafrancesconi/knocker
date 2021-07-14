@@ -5,7 +5,7 @@ import Image from "next/image";
 import { Disclosure } from "@headlessui/react";
 import { MenuIcon, XIcon } from "@heroicons/react/outline";
 
-const Nav = ({ navigation }) => {
+const Nav = ({ navigation = [] }) => {
   const router = useRouter();
 
   return (
