@@ -1,7 +1,8 @@
 import Layout from "components/Layout";
-import React, { useState } from "react";
+import React from "react";
 
 import { useToasts } from "react-toast-notifications";
+import { useModal } from "hooks/useModal";
 
 import { connect } from "db";
 import Modal from "components/Modal";
@@ -9,16 +10,19 @@ import Modal from "components/Modal";
 const Configurations = ({ data }) => {
   const { addToast } = useToasts();
 
-  const [modalOpen, setModalOpen] = useState(false);
-  const [modalContent, setModalContent] = useState([]);
-  const [modalTitle, setModalTitle] = useState("");
+  const {
+    modalOpen,
+    openModal,
+    closeModal,
+    modalContent,
+    modalTitle,
+    updateContent,
+  } = useModal();
 
   const runConfiguration = async (name, filepath, compose) => {
     const api = `/api/docker/${compose ? "compose/up" : ""}`;
 
-    setModalTitle(name);
-    setModalContent([]);
-    setModalOpen(true);
+    openModal(name);
 
     try {
       const res = await fetch(api, {
@@ -35,17 +39,8 @@ const Configurations = ({ data }) => {
         if (done) {
           break;
         }
-        setModalContent((oldContent) => [...oldContent, value]);
+        updateContent(value.split("\n"));
       }
-
-      // const { result } = await res.json();
-      // console.log("Result", result);
-
-      // if (result === "OK") {
-      //   addToast("Command launched.", {
-      //     appearance: "success",
-      //   });
-      // }
     } catch (err) {
       addToast("Something went wrong.", {
         appearance: "error",
@@ -55,11 +50,7 @@ const Configurations = ({ data }) => {
 
   return (
     <Layout>
-      <Modal
-        onClose={() => setModalOpen(false)}
-        show={modalOpen}
-        title={modalTitle}
-      >
+      <Modal onClose={() => closeModal()} show={modalOpen} title={modalTitle}>
         {modalContent}
       </Modal>
       <h2 className="text-2xl font-bold text-gray-800 pb-4 flex justify-between">

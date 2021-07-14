@@ -9,7 +9,7 @@ const logs = async (req, res) => {
         res.status(500).end(error.message);
         return resolve();
       }
-      res.end("OK");
+      res.end();
       return resolve();
     });
 

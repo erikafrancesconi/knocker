@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { useRouter } from "next/router";
 import { useToasts } from "react-toast-notifications";
 
@@ -6,18 +6,24 @@ import Layout from "components/Layout";
 import Modal from "components/Modal";
 
 import { execute } from "utils/server/process";
+import { useModal } from "hooks/useModal";
 
 export default function Home({ headers, data }) {
   const router = useRouter();
   const { addToast } = useToasts();
 
+  const {
+    modalOpen,
+    openModal,
+    closeModal,
+    modalContent,
+    modalTitle,
+    updateContent,
+  } = useModal();
+
   const refreshData = () => {
     router.replace(router.asPath);
   };
-
-  const [modalOpen, setModalOpen] = useState(false);
-  const [modalContent, setModalContent] = useState([]);
-  const [modalTitle, setModalTitle] = useState("");
 
   const stopContainer = async (containerId, containerName) => {
     containerId = containerId.trim();
@@ -46,16 +52,12 @@ export default function Home({ headers, data }) {
   };
 
   const showLogs = async (containerId, containerName) => {
-    containerId = containerId.trim();
-
-    setModalTitle(containerName);
-    setModalContent([]);
-    setModalOpen(true);
+    openModal(containerName);
 
     try {
       const res = await fetch("/api/docker/logs", {
         method: "POST",
-        body: JSON.stringify({ containerId }),
+        body: JSON.stringify({ containerId: containerId.trim() }),
         headers: {
           "Content-Type": "application/json",
         },
@@ -64,11 +66,10 @@ export default function Home({ headers, data }) {
 
       while (true) {
         const { value, done } = await reader.read();
-        debugger;
         if (done) {
           break;
         }
-        setModalContent((oldContent) => [...oldContent, ...value.split("\n")]);
+        updateContent(value.split("\n"));
       }
     } catch (err) {
       addToast("Something went wrong.", {
@@ -79,11 +80,7 @@ export default function Home({ headers, data }) {
 
   return (
     <Layout>
-      <Modal
-        onClose={() => setModalOpen(false)}
-        show={modalOpen}
-        title={modalTitle}
-      >
+      <Modal onClose={() => closeModal()} show={modalOpen} title={modalTitle}>
         {modalContent}
       </Modal>
       <h2 className="text-2xl font-bold text-gray-800 pb-4 flex justify-between">
