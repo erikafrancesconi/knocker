@@ -18,7 +18,7 @@ export default function Home({ headers, data }) {
     closeModal,
     modalContent,
     modalTitle,
-    updateContent,
+    appendContent,
   } = useModal();
 
   const refreshData = () => {
@@ -69,7 +69,7 @@ export default function Home({ headers, data }) {
         if (done) {
           break;
         }
-        updateContent(value.split("\n"));
+        appendContent(value.split("\n"));
       }
     } catch (err) {
       addToast("Something went wrong.", {

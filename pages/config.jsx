@@ -16,7 +16,7 @@ const Configurations = ({ data }) => {
     closeModal,
     modalContent,
     modalTitle,
-    updateContent,
+    appendContent,
   } = useModal();
 
   const runConfiguration = async (name, filepath, compose) => {
@@ -39,7 +39,7 @@ const Configurations = ({ data }) => {
         if (done) {
           break;
         }
-        updateContent(value.split("\n"));
+        appendContent(value.split("\n"));
       }
     } catch (err) {
       addToast("Something went wrong.", {

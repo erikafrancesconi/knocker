@@ -15,7 +15,7 @@ export const useModal = () => {
     setModalOpen(false);
   };
 
-  const updateContent = (content = []) => {
+  const appendContent = (content = []) => {
     setModalContent((oldContent) => [...oldContent, ...content]);
   };
 
@@ -25,6 +25,6 @@ export const useModal = () => {
     modalContent,
     openModal,
     closeModal,
-    updateContent,
+    appendContent,
   };
 };
