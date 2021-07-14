@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 import { useRouter } from "next/router";
 import { useToasts } from "react-toast-notifications";
 
 import Layout from "components/Layout";
+import Modal from "components/Modal";
 
 import { execute } from "utils/server/process";
 
@@ -13,6 +14,10 @@ export default function Home({ headers, data }) {
   const refreshData = () => {
     router.replace(router.asPath);
   };
+
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalContent, setModalContent] = useState([]);
+  const [modalTitle, setModalTitle] = useState("");
 
   const stopContainer = async (containerId, containerName) => {
     containerId = containerId.trim();
@@ -40,8 +45,47 @@ export default function Home({ headers, data }) {
     }
   };
 
+  const showLogs = async (containerId, containerName) => {
+    containerId = containerId.trim();
+
+    setModalTitle(containerName);
+    setModalContent([]);
+    setModalOpen(true);
+
+    try {
+      const res = await fetch("/api/docker/logs", {
+        method: "POST",
+        body: JSON.stringify({ containerId }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      const reader = res.body.pipeThrough(new TextDecoderStream()).getReader();
+
+      while (true) {
+        const { value, done } = await reader.read();
+        debugger;
+        if (done) {
+          break;
+        }
+        setModalContent((oldContent) => [...oldContent, ...value.split("\n")]);
+      }
+    } catch (err) {
+      addToast("Something went wrong.", {
+        appearance: "error",
+      });
+    }
+  };
+
   return (
     <Layout>
+      <Modal
+        onClose={() => setModalOpen(false)}
+        show={modalOpen}
+        title={modalTitle}
+      >
+        {modalContent}
+      </Modal>
       <h2 className="text-2xl font-bold text-gray-800 pb-4 flex justify-between">
         Running Processes
         <button
@@ -84,7 +128,7 @@ export default function Home({ headers, data }) {
                         </th>
                       ))}
                     <th scope="col" className="relative px-6 py-3">
-                      <span className="sr-only">Edit</span>
+                      <span className="sr-only">Functionalities</span>
                     </th>
                   </tr>
                 </thead>
@@ -109,6 +153,13 @@ export default function Home({ headers, data }) {
                           ></td>
                         ))}
                         <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium align-top">
+                          <button
+                            className="bg-blue-800 hover:bg-blue-500 rounded-md inline-flex items-center py-1 px-2 text-white mr-1"
+                            title="Show Logs"
+                            onClick={() => showLogs(d[0], d[5])}
+                          >
+                            Logs
+                          </button>
                           <button
                             className="bg-red-700 hover:bg-red-500 rounded-md inline-flex items-center py-1 px-2 text-white"
                             title="Stop"
