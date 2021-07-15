@@ -7,7 +7,7 @@ import { useModal } from "hooks/useModal";
 import { connect } from "db";
 import Modal from "components/Modal";
 
-const Configurations = ({ data }) => {
+const Configurations = ({ data = [] }) => {
   const { addToast } = useToasts();
 
   const {

@@ -8,7 +8,7 @@ import Modal from "components/Modal";
 import { execute } from "utils/server/process";
 import { useModal } from "hooks/useModal";
 
-export default function Home({ headers, data }) {
+const Home = ({ headers = [], data = [] }) => {
   const router = useRouter();
   const { addToast } = useToasts();
 
@@ -175,7 +175,7 @@ export default function Home({ headers, data }) {
       </div>
     </Layout>
   );
-}
+};
 
 export const getServerSideProps = async (context) => {
   let headers = [],
@@ -209,3 +209,5 @@ export const getServerSideProps = async (context) => {
     props: { headers, data },
   };
 };
+
+export default Home;
