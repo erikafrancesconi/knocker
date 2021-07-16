@@ -1,16 +1,16 @@
-import React from "react";
-import { useRouter } from "next/router";
+import React, { useEffect, useState } from "react";
 import { useToasts } from "react-toast-notifications";
 
 import Layout from "components/Layout";
 import Modal from "components/Modal";
 
-import { execute } from "utils/server/process";
 import { useModal } from "hooks/useModal";
 
-const Home = ({ headers = [], data = [] }) => {
-  const router = useRouter();
+const Home = () => {
   const { addToast } = useToasts();
+
+  const [headers, setHeaders] = useState([]);
+  const [data, setData] = useState([]);
 
   const {
     modalOpen,
@@ -21,9 +21,44 @@ const Home = ({ headers = [], data = [] }) => {
     appendContent,
   } = useModal();
 
-  const refreshData = () => {
-    router.replace(router.asPath);
+  const fetchData = async () => {
+    try {
+      const res = await fetch("/api/docker/ps", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      const { result } = await res.json();
+      let rows = result
+        .split("\n")
+        .map((row) => row.split("  ").filter((r) => r !== ""))
+        .filter((row) => row.length > 0);
+
+      rows[0].splice(2, 1); // Command is useless
+      setHeaders(rows[0]);
+
+      rows = rows.filter((row, idx) => idx > 0);
+      rows.forEach((d) => {
+        if (!d[4].trim().startsWith("Up") || d.length < 7) {
+          // Inserting white element for ports if process is not up
+          d.splice(5, 0, "");
+        }
+        d[5] = d[5].split(",").join("<br />");
+        d.splice(2, 1); // Command is useless
+      });
+      setData(rows);
+    } catch (err) {
+      addToast("Something went wrong.", {
+        appearance: "error",
+      });
+    }
   };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   const stopContainer = async (containerId, containerName) => {
     containerId = containerId.trim();
@@ -42,7 +77,7 @@ const Home = ({ headers = [], data = [] }) => {
         addToast(`Container ${containerName} stopped.`, {
           appearance: "success",
         });
-        refreshData();
+        fetchData();
       }
     } catch (err) {
       addToast("Something went wrong.", {
@@ -88,7 +123,7 @@ const Home = ({ headers = [], data = [] }) => {
         <button
           className="bg-green-600 hover:bg-green-800 text-white p-2 rounded righ"
           title="Refresh"
-          onClick={refreshData}
+          onClick={fetchData}
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -175,39 +210,6 @@ const Home = ({ headers = [], data = [] }) => {
       </div>
     </Layout>
   );
-};
-
-export const getServerSideProps = async (context) => {
-  let headers = [],
-    data = [];
-
-  try {
-    const res = await execute("docker ps");
-
-    const rows = res
-      .split("\n")
-      .map((row) => row.split("  ").filter((r) => r !== ""))
-      .filter((row) => row.length > 0);
-
-    headers = rows[0];
-    headers.splice(2, 1); // Command is useless
-
-    data = rows.filter((row, idx) => idx > 0);
-    data.forEach((d) => {
-      if (!d[4].trim().startsWith("Up") || d.length < 7) {
-        // Inserting white element for ports if process is not up
-        d.splice(5, 0, "");
-      }
-      d[5] = d[5].split(",").join("<br />");
-      d.splice(2, 1); // Command is useless
-    });
-  } catch (err) {
-    console.errror(err);
-  }
-
-  return {
-    props: { headers, data },
-  };
 };
 
 export default Home;
