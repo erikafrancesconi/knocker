@@ -27,17 +27,19 @@ export const useDocker = () => {
           appearance: "success",
         });
         callback();
+        return "OK";
       }
     } catch (err) {
       console.error(err);
       addToast("Something went wrong.", {
         appearance: "error",
       });
+      return "KO";
     }
   };
 
   const startContainer = async (containerId, containerName, callback) => {
-    executeCommand(
+    return await executeCommand(
       { command: "start", resok: "started" },
       containerId,
       containerName,
@@ -46,7 +48,7 @@ export const useDocker = () => {
   };
 
   const stopContainer = async (containerId, containerName, callback) => {
-    executeCommand(
+    return await executeCommand(
       { command: "stop", resok: "stopped" },
       containerId,
       containerName,
@@ -55,7 +57,7 @@ export const useDocker = () => {
   };
 
   const removeContainer = async (containerId, containerName, callback) => {
-    executeCommand(
+    return await executeCommand(
       { command: "rm", resok: "removed" },
       containerId,
       containerName,

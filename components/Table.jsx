@@ -1,5 +1,3 @@
-import React from "react";
-
 const Table = ({
   title,
   columns = [],
@@ -7,6 +5,13 @@ const Table = ({
   refreshData = () => {},
   functions = [],
 }) => {
+  const manageButtonClick = async (element, buttonFunction) => {
+    console.log("Starting", element);
+    debugger;
+    const res = await buttonFunction();
+    console.log("Ending", res);
+  };
+
   return (
     <>
       <h2 className="text-2xl font-bold text-gray-800 pb-4 flex justify-between">
@@ -83,7 +88,12 @@ const Table = ({
                               key={idx}
                               className={`bg-${f.color}-800 hover:bg-${f.color}-500 rounded-md inline-flex items-center py-1 px-2 text-white mr-1`}
                               title={f.tooltip}
-                              onClick={() => f.onClick(d[0], d[5], f.callback)}
+                              onClick={(e) => {
+                                console.log(e);
+                                manageButtonClick(e.target, () =>
+                                  f.onClick(d[0], d[5], f.callback)
+                                );
+                              }}
                             >
                               {f.title}
                             </button>
