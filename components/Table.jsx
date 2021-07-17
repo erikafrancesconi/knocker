@@ -62,6 +62,8 @@ const Table = ({
                         <td className="px-4 py-2 align-top">
                           {d[3].trim().startsWith("Up") ? (
                             <span className="rounded-full h-6 w-6 flex items-center justify-center bg-green-400"></span>
+                          ) : d[3].trim().startsWith("Exited") ? (
+                            <span className="rounded-full h-6 w-6 flex items-center justify-center bg-red-400"></span>
                           ) : (
                             <span className="rounded-full h-6 w-6 flex items-center justify-center bg-yellow-400"></span>
                           )}
