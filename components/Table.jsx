@@ -77,7 +77,7 @@ const Table = ({ title, columns = [], rows = [], refreshData = () => {} }) => {
         {modalContent}
       </Modal>
       <h2 className="text-2xl font-bold text-gray-800 pb-4 flex justify-between">
-        Running Processes
+        {title}
         <button
           className="bg-green-600 hover:bg-green-800 text-white p-2 rounded righ"
           title="Refresh"
