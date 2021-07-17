@@ -1,13 +1,11 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 import { useToasts } from "react-toast-notifications";
 
 import { useModal } from "hooks/useModal";
 import { useDocker } from "hooks/useDocker";
 
-import Layout from "components/Layout";
-import Table from "components/Table";
-import Modal from "components/Modal";
+import { Layout, Table, Modal } from "components";
 
 const Home = () => {
   const [headers, setHeaders] = useState([]);
