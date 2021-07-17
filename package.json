@@ -28,6 +28,7 @@
     "eslint": "^7.30.0",
     "eslint-config-next": "^11.0.1",
     "jest": "^27.0.6",
+    "jest-fetch-mock": "^3.0.3",
     "postcss": "^8.3.5",
     "tailwindcss": "^2.2.4"
   }
