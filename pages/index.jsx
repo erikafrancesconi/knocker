@@ -63,7 +63,7 @@ const Home = () => {
   };
 
   useEffect(() => {
-    fetchData();
+    fetchData("");
     fetchData('--all --filter "status=exited"');
   }, []);
 
