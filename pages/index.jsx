@@ -1,11 +1,27 @@
 import React, { useEffect, useState } from "react";
 
+import { useToasts } from "react-toast-notifications";
+
+import { useModal } from "hooks/useModal";
+
 import Layout from "components/Layout";
 import Table from "components/Table";
+import Modal from "components/Modal";
 
 const Home = () => {
   const [headers, setHeaders] = useState([]);
   const [data, setData] = useState([]);
+
+  const { addToast } = useToasts();
+
+  const {
+    modalOpen,
+    openModal,
+    closeModal,
+    modalContent,
+    modalTitle,
+    appendContent,
+  } = useModal();
 
   const fetchData = async () => {
     try {
@@ -44,13 +60,84 @@ const Home = () => {
     fetchData();
   }, []);
 
+  const stopContainer = async (containerId, containerName) => {
+    containerId = containerId.trim();
+
+    try {
+      const res = await fetch("/api/docker/stop", {
+        method: "POST",
+        body: JSON.stringify({ containerId }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      const { result } = await res.json();
+      if (result.replaceAll("\n", "") === containerId) {
+        addToast(`Container ${containerName} stopped.`, {
+          appearance: "success",
+        });
+        fetchData();
+      }
+    } catch (err) {
+      console.error(err);
+      addToast("Something went wrong.", {
+        appearance: "error",
+      });
+    }
+  };
+
+  const showLogs = async (containerId, containerName) => {
+    openModal(containerName);
+
+    try {
+      const res = await fetch("/api/docker/logs", {
+        method: "POST",
+        body: JSON.stringify({ containerId: containerId.trim() }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      const reader = res.body.pipeThrough(new TextDecoderStream()).getReader();
+
+      while (true) {
+        const { value, done } = await reader.read();
+        if (done) {
+          break;
+        }
+        appendContent(value.split("\n"));
+      }
+    } catch (err) {
+      addToast("Something went wrong.", {
+        appearance: "error",
+      });
+    }
+  };
+
   return (
     <Layout>
+      <Modal onClose={() => closeModal()} show={modalOpen} title={modalTitle}>
+        {modalContent}
+      </Modal>
       <Table
-        title="Running processes"
+        title="Running containers"
         columns={headers}
         rows={data}
         refreshData={fetchData}
+        functions={[
+          {
+            title: "Logs",
+            tooltip: "Show Logs",
+            onClick: showLogs,
+            color: "blue",
+          },
+          {
+            title: "Stop",
+            tooltip: "Stop Container",
+            onClick: stopContainer,
+            color: "red",
+          },
+        ]}
       />
     </Layout>
   );

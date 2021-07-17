@@ -1,81 +1,14 @@
 import React from "react";
 
-import { useModal } from "hooks/useModal";
-import { useToasts } from "react-toast-notifications";
-
-import Modal from "components/Modal";
-
-const Table = ({ title, columns = [], rows = [], refreshData = () => {} }) => {
-  const {
-    modalOpen,
-    openModal,
-    closeModal,
-    modalContent,
-    modalTitle,
-    appendContent,
-  } = useModal();
-
-  const { addToast } = useToasts();
-
-  const stopContainer = async (containerId, containerName) => {
-    containerId = containerId.trim();
-
-    try {
-      const res = await fetch("/api/docker/stop", {
-        method: "POST",
-        body: JSON.stringify({ containerId }),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-
-      const { result } = await res.json();
-      if (result.replaceAll("\n", "") === containerId) {
-        addToast(`Container ${containerName} stopped.`, {
-          appearance: "success",
-        });
-        refreshData();
-      }
-    } catch (err) {
-      console.error(err);
-      addToast("Something went wrong.", {
-        appearance: "error",
-      });
-    }
-  };
-
-  const showLogs = async (containerId, containerName) => {
-    openModal(containerName);
-
-    try {
-      const res = await fetch("/api/docker/logs", {
-        method: "POST",
-        body: JSON.stringify({ containerId: containerId.trim() }),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      const reader = res.body.pipeThrough(new TextDecoderStream()).getReader();
-
-      while (true) {
-        const { value, done } = await reader.read();
-        if (done) {
-          break;
-        }
-        appendContent(value.split("\n"));
-      }
-    } catch (err) {
-      addToast("Something went wrong.", {
-        appearance: "error",
-      });
-    }
-  };
-
+const Table = ({
+  title,
+  columns = [],
+  rows = [],
+  refreshData = () => {},
+  functions = [],
+}) => {
   return (
     <>
-      <Modal onClose={() => closeModal()} show={modalOpen} title={modalTitle}>
-        {modalContent}
-      </Modal>
       <h2 className="text-2xl font-bold text-gray-800 pb-4 flex justify-between">
         {title}
         <button
@@ -143,20 +76,16 @@ const Table = ({ title, columns = [], rows = [], refreshData = () => {} }) => {
                           ></td>
                         ))}
                         <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium align-top">
-                          <button
-                            className="bg-blue-800 hover:bg-blue-500 rounded-md inline-flex items-center py-1 px-2 text-white mr-1"
-                            title="Show Logs"
-                            onClick={() => showLogs(d[0], d[5])}
-                          >
-                            Logs
-                          </button>
-                          <button
-                            className="bg-red-700 hover:bg-red-500 rounded-md inline-flex items-center py-1 px-2 text-white"
-                            title="Stop"
-                            onClick={() => stopContainer(d[0], d[5])}
-                          >
-                            Stop
-                          </button>
+                          {functions.map((f, idx) => (
+                            <button
+                              key={idx}
+                              className={`bg-${f.color}-800 hover:bg-${f.color}-500 rounded-md inline-flex items-center py-1 px-2 text-white mr-1`}
+                              title={f.tooltip}
+                              onClick={() => f.onClick(d[0], d[5])}
+                            >
+                              {f.title}
+                            </button>
+                          ))}
                         </td>
                       </tr>
                     ))}
