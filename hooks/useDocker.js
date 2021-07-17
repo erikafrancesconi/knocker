@@ -36,6 +36,15 @@ export const useDocker = () => {
     }
   };
 
+  const startContainer = async (containerId, containerName, callback) => {
+    executeCommand(
+      { command: "start", resok: "started" },
+      containerId,
+      containerName,
+      callback
+    );
+  };
+
   const stopContainer = async (containerId, containerName, callback) => {
     executeCommand(
       { command: "stop", resok: "stopped" },
@@ -55,6 +64,7 @@ export const useDocker = () => {
   };
 
   return {
+    startContainer,
     stopContainer,
     removeContainer,
   };

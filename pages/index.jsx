@@ -22,7 +22,7 @@ const Home = () => {
     appendContent,
   } = useModal();
 
-  const { stopContainer, removeContainer } = useDocker();
+  const { startContainer, stopContainer, removeContainer } = useDocker();
 
   const fetchData = async (options = "") => {
     try {
@@ -134,6 +134,16 @@ const Home = () => {
           rows={data.exited}
           refreshData={() => fetchData('--all --filter "status=exited"')}
           functions={[
+            {
+              title: "Start",
+              tooltip: "Start Container",
+              onClick: startContainer,
+              color: "green",
+              callback: () => {
+                fetchData("");
+                fetchData('--all --filter "status=exited"');
+              },
+            },
             {
               title: "Remove",
               tooltip: "Remove Container",
