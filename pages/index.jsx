@@ -112,12 +112,17 @@ const Home = () => {
               tooltip: "Show Logs",
               onClick: showLogs,
               color: "blue",
+              callback: () => {},
             },
             {
               title: "Stop",
               tooltip: "Stop Container",
               onClick: stopContainer,
               color: "red",
+              callback: () => {
+                fetchData("");
+                fetchData('--all --filter "status=exited"');
+              },
             },
           ]}
         />
@@ -134,6 +139,7 @@ const Home = () => {
               tooltip: "Remove Container",
               onClick: removeContainer,
               color: "red",
+              callback: () => fetchData('--all --filter "status=exited"'),
             },
           ]}
         />
