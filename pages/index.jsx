@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useToasts } from "react-toast-notifications";
 
 import { useModal } from "hooks/useModal";
+import { useDocker } from "hooks/useDocker";
 
 import Layout from "components/Layout";
 import Table from "components/Table";
@@ -22,6 +23,8 @@ const Home = () => {
     modalTitle,
     appendContent,
   } = useModal();
+
+  const { stopContainer, removeContainer } = useDocker();
 
   const fetchData = async (options = "") => {
     try {
@@ -66,60 +69,6 @@ const Home = () => {
     fetchData("");
     fetchData('--all --filter "status=exited"');
   }, []);
-
-  const stopContainer = async (containerId, containerName) => {
-    containerId = containerId.trim();
-
-    try {
-      const res = await fetch("/api/docker/stop", {
-        method: "POST",
-        body: JSON.stringify({ containerId }),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-
-      const { result } = await res.json();
-      if (result.replaceAll("\n", "") === containerId) {
-        addToast(`Container ${containerName} stopped.`, {
-          appearance: "success",
-        });
-        fetchData("");
-      }
-    } catch (err) {
-      console.error(err);
-      addToast("Something went wrong.", {
-        appearance: "error",
-      });
-    }
-  };
-
-  const removeContainer = async (containerId, containerName) => {
-    containerId = containerId.trim();
-
-    try {
-      const res = await fetch("/api/docker/rm", {
-        method: "POST",
-        body: JSON.stringify({ containerId }),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-
-      const { result } = await res.json();
-      if (result.replaceAll("\n", "") === containerId) {
-        addToast(`Container ${containerName} removed.`, {
-          appearance: "success",
-        });
-        fetchData('--all --filter "status=exited"');
-      }
-    } catch (err) {
-      console.error(err);
-      addToast("Something went wrong.", {
-        appearance: "error",
-      });
-    }
-  };
 
   const showLogs = async (containerId, containerName) => {
     openModal(containerName);

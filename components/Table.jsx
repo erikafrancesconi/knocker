@@ -83,7 +83,7 @@ const Table = ({
                               key={idx}
                               className={`bg-${f.color}-800 hover:bg-${f.color}-500 rounded-md inline-flex items-center py-1 px-2 text-white mr-1`}
                               title={f.tooltip}
-                              onClick={() => f.onClick(d[0], d[5])}
+                              onClick={() => f.onClick(d[0], d[5], refreshData)}
                             >
                               {f.title}
                             </button>
