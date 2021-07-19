@@ -2,7 +2,6 @@ import { execute } from "utils/server/process";
 
 const ps = async (req, res) => {
   const { options } = req.body;
-  console.log("options", options);
 
   try {
     const result = await execute(`docker ps ${options}`);

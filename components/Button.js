@@ -11,7 +11,7 @@ const Button = ({ color, tooltip, title, handleClick }) => {
 
   return (
     <button
-      className={`bg-${color}-800 hover:bg-${color}-500 rounded-md inline-flex items-center py-1 px-2 text-white mr-1`}
+      className={`bg-${color}-800 hover:bg-${color}-500 disabled:opacity-50 disabled:cursor-not-allowed rounded-md inline-flex items-center py-1 px-2 text-white mr-1`}
       title={tooltip}
       onClick={manageButtonClick}
       disabled={disabled}
