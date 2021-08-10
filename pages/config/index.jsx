@@ -1,11 +1,10 @@
-import Layout from "components/Layout";
-import React from "react";
+import Link from "next/link";
 
 import { useToasts } from "react-toast-notifications";
 import { useModal } from "hooks/useModal";
 
 import { connect } from "db";
-import Modal from "components/Modal";
+import { Layout, Modal } from "components";
 
 const Configurations = ({ data = [] }) => {
   const { addToast } = useToasts();
@@ -49,29 +48,32 @@ const Configurations = ({ data = [] }) => {
   };
 
   return (
-    <Layout>
+    <Layout title="Configurations">
       <Modal onClose={() => closeModal()} show={modalOpen} title={modalTitle}>
         {modalContent}
       </Modal>
       <h2 className="text-2xl font-bold text-gray-800 pb-4 flex justify-between">
         Saved configurations
-        <button
-          className="bg-blue-600 hover:bg-blue-800 text-white p-2 rounded righ"
-          title="New"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-6 w-6"
-            viewBox="0 0 20 20"
-            fill="currentColor"
+        {/* eslint-disable-next-line @next/next/link-passhref */}
+        <Link href="/config/new">
+          <button
+            className="bg-blue-600 hover:bg-blue-800 text-white p-2 rounded righ"
+            title="New"
           >
-            <path
-              fillRule="evenodd"
-              d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
-              clipRule="evenodd"
-            />
-          </svg>
-        </button>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-6 w-6"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+            >
+              <path
+                fillRule="evenodd"
+                d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
+                clipRule="evenodd"
+              />
+            </svg>
+          </button>
+        </Link>
       </h2>
       <div className="flex flex-col">
         <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">

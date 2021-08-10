@@ -1,6 +1,6 @@
-import React from "react";
 import { useRouter } from "next/router";
 import Image from "next/image";
+import Link from "next/link";
 
 import { Disclosure } from "@headlessui/react";
 import { MenuIcon, XIcon } from "@heroicons/react/outline";
@@ -26,17 +26,17 @@ const Nav = ({ navigation = [] }) => {
                 <div className="hidden md:block">
                   <div className="ml-6 flex items-baseline space-x-4">
                     {navigation.map((item, itemIdx) => (
-                      <a
-                        key={itemIdx}
-                        href={item.url}
-                        className={`${
-                          router.asPath === item.url
-                            ? "bg-gray-900 text-white"
-                            : "text-gray-300 hover:bg-gray-700 hover:text-white"
-                        } px-3 py-2 rounded-md text-sm font-medium`}
-                      >
-                        {item.title}
-                      </a>
+                      <Link key={itemIdx} href={item.url}>
+                        <a
+                          className={`${
+                            router.asPath === item.url
+                              ? "bg-gray-900 text-white"
+                              : "text-gray-300 hover:bg-gray-700 hover:text-white"
+                          } px-3 py-2 rounded-md text-sm font-medium`}
+                        >
+                          {item.title}
+                        </a>
+                      </Link>
                     ))}
                   </div>
                 </div>

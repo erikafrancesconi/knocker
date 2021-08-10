@@ -96,7 +96,7 @@ const Home = () => {
   };
 
   return (
-    <Layout>
+    <Layout title="Dashboard">
       <Modal onClose={() => closeModal()} show={modalOpen} title={modalTitle}>
         {modalContent}
       </Modal>
