@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 
 import { useToasts } from "react-toast-notifications";
 
+import { Tab } from "@headlessui/react";
+
 import { useModal } from "hooks/useModal";
 import { useDocker } from "hooks/useDocker";
 
@@ -95,65 +97,100 @@ const Home = () => {
     }
   };
 
+  const classNames = (...classes) => {
+    return classes.filter(Boolean).join(" ");
+  };
+
   return (
     <Layout title="Dashboard">
       <Modal onClose={() => closeModal()} show={modalOpen} title={modalTitle}>
         {modalContent}
       </Modal>
-      <div className="mb-16">
-        <Table
-          title="Running containers"
-          columns={headers}
-          rows={data.running}
-          refreshData={() => fetchData("")}
-          functions={[
-            {
-              title: "Logs",
-              tooltip: "Show Logs",
-              onClick: showLogs,
-              color: "blue",
-              callback: () => {},
-            },
-            {
-              title: "Stop",
-              tooltip: "Stop Container",
-              onClick: stopContainer,
-              color: "red",
-              callback: () => {
-                fetchData("");
-                fetchData('--all --filter "status=exited"');
-              },
-            },
-          ]}
-        />
-      </div>
-      <div>
-        <Table
-          title="Stopped containers"
-          columns={headers}
-          rows={data.exited}
-          refreshData={() => fetchData('--all --filter "status=exited"')}
-          functions={[
-            {
-              title: "Start",
-              tooltip: "Start Container",
-              onClick: startContainer,
-              color: "green",
-              callback: () => {
-                fetchData("");
-                fetchData('--all --filter "status=exited"');
-              },
-            },
-            {
-              title: "Remove",
-              tooltip: "Remove Container",
-              onClick: removeContainer,
-              color: "red",
-              callback: () => fetchData('--all --filter "status=exited"'),
-            },
-          ]}
-        />
-      </div>
+      <Tab.Group>
+        <Tab.List className="flex space-x-2 border-b mb-6">
+          <Tab
+            className={({ selected }) =>
+              classNames(
+                "text-sm font-medium rounded-t-lg border-t border-l border-r px-4 py-2",
+                "focus:outline-none focus:ring-2 ring-offset-2 ring-offset-blue-400 ring-white ring-opacity-60",
+                selected ? "bg-blue-700 text-white" : "text-blue-700 "
+              )
+            }
+          >
+            Containers
+          </Tab>
+          <Tab
+            className={({ selected }) =>
+              classNames(
+                "text-sm font-medium rounded-t-lg border-t border-l border-r px-4 py-2",
+                "focus:outline-none focus:ring-2 ring-offset-2 ring-offset-blue-400 ring-white ring-opacity-60",
+                selected ? "bg-blue-700 text-white" : "text-blue-700 "
+              )
+            }
+          >
+            Volumes
+          </Tab>
+        </Tab.List>
+        <Tab.Panels className="mt-2">
+          <Tab.Panel>
+            <div className="mb-16">
+              <Table
+                title="Running containers"
+                columns={headers}
+                rows={data.running}
+                refreshData={() => fetchData("")}
+                functions={[
+                  {
+                    title: "Logs",
+                    tooltip: "Show Logs",
+                    onClick: showLogs,
+                    color: "blue",
+                    callback: () => {},
+                  },
+                  {
+                    title: "Stop",
+                    tooltip: "Stop Container",
+                    onClick: stopContainer,
+                    color: "red",
+                    callback: () => {
+                      fetchData("");
+                      fetchData('--all --filter "status=exited"');
+                    },
+                  },
+                ]}
+              />
+            </div>
+            <div>
+              <Table
+                title="Stopped containers"
+                columns={headers}
+                rows={data.exited}
+                refreshData={() => fetchData('--all --filter "status=exited"')}
+                functions={[
+                  {
+                    title: "Start",
+                    tooltip: "Start Container",
+                    onClick: startContainer,
+                    color: "green",
+                    callback: () => {
+                      fetchData("");
+                      fetchData('--all --filter "status=exited"');
+                    },
+                  },
+                  {
+                    title: "Remove",
+                    tooltip: "Remove Container",
+                    onClick: removeContainer,
+                    color: "red",
+                    callback: () => fetchData('--all --filter "status=exited"'),
+                  },
+                ]}
+              />
+            </div>
+          </Tab.Panel>
+          <Tab.Panel>Content 2</Tab.Panel>
+        </Tab.Panels>
+      </Tab.Group>
     </Layout>
   );
 };
