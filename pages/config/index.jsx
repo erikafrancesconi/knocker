@@ -1,11 +1,16 @@
+import { useState } from "react";
+
 import Link from "next/link";
+import router from "next/router";
+
+import { readFile } from "fs/promises";
+import YAML from "yaml";
 
 import { useToasts } from "react-toast-notifications";
 import { useModal } from "hooks/useModal";
 
 import { connect } from "db";
 import { Layout, Modal } from "components";
-import router from "next/router";
 
 const Configurations = ({ data = [] }) => {
   const { addToast } = useToasts();
@@ -18,6 +23,17 @@ const Configurations = ({ data = [] }) => {
     modalTitle,
     appendContent,
   } = useModal();
+
+  const [servicesObj, setServicesObj] = useState({});
+
+  const updateServiceState = (e) => {
+    const id = e.target.id.substring(0, e.target.id.indexOf("-"));
+    const fieldName = e.target.name;
+    setServicesObj({
+      ...servicesObj,
+      [id]: { ...servicesObj[id], [fieldName]: e.target.checked },
+    });
+  };
 
   const runConfiguration = async (name, filepath, compose) => {
     const api = `/api/docker/${compose ? "compose/up" : ""}`;
@@ -117,15 +133,35 @@ const Configurations = ({ data = [] }) => {
                 <tbody className="bg-white divide-y divide-gray-200">
                   {data.length > 0 &&
                     data.map((d, idx) => {
-                      const { id, name, filepath, compose } = d;
-
+                      const { id, name, filepath, compose, services } = d;
                       return (
                         <tr key={idx}>
-                          <td className="px-6 py-2 text-sm text-gray-800">
+                          <td className="px-6 py-2 text-sm text-gray-900 align-top font-medium">
                             {name}
                           </td>
-                          <td className="px-6 py-2 text-sm text-gray-800">
-                            {filepath}
+                          <td className="px-6 py-2 text-sm text-gray-800 align-top">
+                            <div className="text-sm">{filepath}</div>
+                            <div className="text-xs text-gray-500 mt-1">
+                              {services.map((service, idx) => (
+                                <span key={idx} className="mr-4 pb-1">
+                                  <input
+                                    type="checkbox"
+                                    name={service}
+                                    id={`${id}-${service}`}
+                                    className="focus:ring-indigo-500 h-4 w-4 mr-1 mb-1 text-indigo-600 border-gray-300 rounded"
+                                    onChange={updateServiceState}
+                                    checked={
+                                      typeof servicesObj[id] !== "undefined"
+                                        ? servicesObj[id][service]
+                                        : false
+                                    }
+                                  />
+                                  <label htmlFor={`${id}-${service}`}>
+                                    {service}
+                                  </label>
+                                </span>
+                              ))}
+                            </div>
                           </td>
 
                           <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
@@ -172,7 +208,21 @@ export const getStaticProps = async () => {
   try {
     const text = "SELECT * FROM configurations ORDER BY name";
     const resp = await client.query(text);
-    data = resp.rows;
+
+    data = await Promise.all(
+      resp.rows.map(async (row) => {
+        const services = [];
+        if (row.filepath.endsWith(".yml")) {
+          const file = await readFile(row.filepath, "utf-8");
+          const yaml = YAML.parse(file);
+
+          for (const service in yaml.services) {
+            services.push(service);
+          }
+        }
+        return { ...row, services };
+      })
+    );
   } catch (err) {
     console.error(err.stack);
   } finally {
