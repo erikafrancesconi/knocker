@@ -5,6 +5,7 @@ import { useModal } from "hooks/useModal";
 
 import { connect } from "db";
 import { Layout, Modal } from "components";
+import router from "next/router";
 
 const Configurations = ({ data = [] }) => {
   const { addToast } = useToasts();
@@ -44,6 +45,20 @@ const Configurations = ({ data = [] }) => {
       addToast("Something went wrong.", {
         appearance: "error",
       });
+    }
+  };
+
+  const deleteConfiguration = async (id) => {
+    const res = await fetch("/api/db/config/remove", {
+      body: JSON.stringify({ id }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+      method: "POST",
+    });
+
+    if (res.ok) {
+      router.push("/config");
     }
   };
 
@@ -115,13 +130,20 @@ const Configurations = ({ data = [] }) => {
 
                           <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                             <button
-                              className="bg-green-700 hover:bg-green-500 rounded-md inline-flex items-center py-1 px-2 text-white"
-                              title="Stop"
+                              className="bg-green-700 hover:bg-green-500 rounded-md inline-flex items-center py-1 px-2 mr-1 text-white"
+                              title="Run Configuration"
                               onClick={() =>
                                 runConfiguration(name, filepath, compose)
                               }
                             >
                               Run
+                            </button>
+                            <button
+                              className="bg-red-700 hover:bg-red-500 rounded-md inline-flex items-center py-1 px-2 mr-1 text-white"
+                              title="Delete Configuration"
+                              onClick={() => deleteConfiguration(id)}
+                            >
+                              Delete
                             </button>
                           </td>
                         </tr>
