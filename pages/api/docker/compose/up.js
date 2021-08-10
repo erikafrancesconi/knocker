@@ -2,12 +2,14 @@ import { dirname } from "path";
 import { exec } from "child_process";
 
 const up = async (req, res) => {
-  const { filepath } = req.body;
+  const { filepath, servizi } = req.body;
+  console.log(servizi);
+
   const folder = dirname(filepath);
 
   return new Promise((resolve) => {
     const process = exec(
-      "docker-compose up -d",
+      `docker-compose up -d ${servizi.join(" ")}`,
       {
         cwd: folder,
       },
@@ -16,7 +18,7 @@ const up = async (req, res) => {
           res.status(500).end(error.message);
           return resolve();
         }
-        res.end();
+        res.end("Done.");
         return resolve();
       }
     );

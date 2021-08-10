@@ -16,7 +16,17 @@ const Row = ({ data, run }) => {
   };
 
   const runConfiguration = () => {
-    run(name, filepath, compose);
+    let servizi = [];
+    for (const [k, v] of Object.entries(servicesObj)) {
+      if (v) {
+        servizi.push(k);
+      }
+    }
+    if (servizi.length === services.length) {
+      // Se sono selezionati tutti non ho bisogno di lanciarli singolarmente
+      servizi = [];
+    }
+    run(name, filepath, compose, servizi);
   };
 
   const deleteConfiguration = async () => {

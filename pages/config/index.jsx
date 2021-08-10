@@ -22,7 +22,7 @@ const Configurations = ({ data = [] }) => {
     appendContent,
   } = useModal();
 
-  const runConfiguration = async (name, filepath, compose) => {
+  const runConfiguration = async (name, filepath, compose, servizi) => {
     const api = `/api/docker/${compose ? "compose/up" : ""}`;
 
     openModal(name);
@@ -30,7 +30,7 @@ const Configurations = ({ data = [] }) => {
     try {
       const res = await fetch(api, {
         method: "POST",
-        body: JSON.stringify({ filepath }),
+        body: JSON.stringify({ filepath, servizi }),
         headers: {
           "Content-Type": "application/json",
         },
