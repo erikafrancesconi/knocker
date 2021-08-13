@@ -97,6 +97,21 @@ const Home = () => {
     }
   };
 
+  const pruneStoppedContainers = async () => {
+    try {
+      const res = await fetch("/api/docker/containerprune", {
+        method: "POST",
+      });
+
+      const { result } = await res.json();
+      if (result === "OK") {
+        fetchData('--all --filter "status=exited"');
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   const classNames = (...classes) => {
     return classes.filter(Boolean).join(" ");
   };
@@ -166,6 +181,7 @@ const Home = () => {
                 columns={headers}
                 rows={data.exited}
                 refreshData={() => fetchData('--all --filter "status=exited"')}
+                deleteData={pruneStoppedContainers}
                 functions={[
                   {
                     title: "Start",
