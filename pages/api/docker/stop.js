@@ -1,7 +1,11 @@
 import { execute } from "utils/server/process";
 
 const stop = async (req, res) => {
-  const { containerId } = req.body;
+  const { containerId, containerName } = req.body;
+
+  if (containerName.trim().startsWith("knocker")) {
+    return res.status(418).json({ error: "Sorry, I can't do that." });
+  }
 
   try {
     const result = await execute(`docker stop ${containerId}`);

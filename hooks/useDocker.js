@@ -14,11 +14,18 @@ export const useDocker = () => {
     try {
       const res = await fetch(`/api/docker/${command.command}`, {
         method: "POST",
-        body: JSON.stringify({ containerId }),
+        body: JSON.stringify({ containerId, containerName }),
         headers: {
           "Content-Type": "application/json",
         },
       });
+
+      if (res.status !== 200) {
+        addToast(res.statusText, {
+          appearance: "error",
+        });
+        return "KO";
+      }
 
       const { result } = await res.json();
 
