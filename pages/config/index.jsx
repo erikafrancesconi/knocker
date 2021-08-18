@@ -7,25 +7,27 @@ import { useToasts } from "react-toast-notifications";
 import { useModal } from "hooks/useModal";
 
 import { connect } from "db";
-import { Layout, Modal } from "components";
+import { Layout, Console } from "components";
 import Row from "components/config/Row";
+
+import { useDisclosure } from "@chakra-ui/react";
 
 const Configurations = ({ data = [] }) => {
   const { addToast } = useToasts();
 
-  const {
-    modalOpen,
-    openModal,
-    closeModal,
-    modalContent,
-    modalTitle,
-    appendContent,
-  } = useModal();
+  const { openModal, modalContent, modalTitle, appendContent } = useModal();
+
+  const { isOpen, onOpen, onClose } = useDisclosure();
+
+  const openConsole = (title) => {
+    openModal(title);
+    onOpen();
+  };
 
   const runConfiguration = async (name, filepath, compose, servizi) => {
     const api = `/api/docker/${compose ? "compose/up" : ""}`;
 
-    openModal(name);
+    openConsole(name);
 
     try {
       const res = await fetch(api, {
@@ -53,9 +55,14 @@ const Configurations = ({ data = [] }) => {
 
   return (
     <Layout title="Configurations">
-      <Modal onClose={() => closeModal()} show={modalOpen} title={modalTitle}>
+      <Console
+        isOpen={isOpen}
+        onOpen={onOpen}
+        onClose={onClose}
+        title={modalTitle}
+      >
         {modalContent}
-      </Modal>
+      </Console>
       <h2 className="text-2xl font-bold text-gray-800 pb-4 flex justify-between">
         Saved configurations
         {/* eslint-disable-next-line @next/next/link-passhref */}

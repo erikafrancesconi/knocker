@@ -1,18 +1,13 @@
 import { useState } from "react";
 
 export const useModal = () => {
-  const [modalOpen, setModalOpen] = useState(false);
   const [modalContent, setModalContent] = useState([]);
   const [modalTitle, setModalTitle] = useState("");
 
-  const openModal = (title = "", content = []) => {
+  const openModal = (title = "", content = [], callback = () => {}) => {
     setModalTitle(title);
     setModalContent(content);
-    setModalOpen(true);
-  };
-
-  const closeModal = () => {
-    setModalOpen(false);
+    callback();
   };
 
   const appendContent = (content = []) => {
@@ -20,11 +15,9 @@ export const useModal = () => {
   };
 
   return {
-    modalOpen,
     modalTitle,
     modalContent,
     openModal,
-    closeModal,
     appendContent,
   };
 };

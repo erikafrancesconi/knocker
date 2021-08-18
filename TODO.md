@@ -1,2 +1,10 @@
-- docker-compose -f "docker-compose.https.yml" up -d --build nginx <
-- remove all stopped containers
+- ChakraUI
+  - index.jsx
+  - config/
+    - index.jsx
+    - [id].jsx
+  - _app.js
+  - _document.js
+- Remove database, use config file
+- Docker API
+- React Table

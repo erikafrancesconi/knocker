@@ -7,7 +7,9 @@ import { Tab } from "@headlessui/react";
 import { useModal } from "hooks/useModal";
 import { useDocker } from "hooks/useDocker";
 
-import { Layout, Table, Modal } from "components";
+import { Layout, Table, Console } from "components";
+
+import { useDisclosure } from "@chakra-ui/react";
 
 const Home = () => {
   const [headers, setHeaders] = useState([]);
@@ -15,16 +17,15 @@ const Home = () => {
 
   const { addToast } = useToasts();
 
-  const {
-    modalOpen,
-    openModal,
-    closeModal,
-    modalContent,
-    modalTitle,
-    appendContent,
-  } = useModal();
+  const { openModal, modalContent, modalTitle, appendContent } = useModal();
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   const { startContainer, stopContainer, removeContainer } = useDocker();
+
+  const openConsole = (title) => {
+    openModal(title);
+    onOpen();
+  };
 
   const fetchData = async (options = "") => {
     try {
@@ -71,7 +72,7 @@ const Home = () => {
   }, []);
 
   const showLogs = async (containerId, containerName) => {
-    openModal(containerName);
+    openConsole(containerName);
 
     try {
       const res = await fetch("/api/docker/logs", {
@@ -118,9 +119,14 @@ const Home = () => {
 
   return (
     <Layout title="Dashboard">
-      <Modal onClose={() => closeModal()} show={modalOpen} title={modalTitle}>
+      <Console
+        isOpen={isOpen}
+        onOpen={onOpen}
+        onClose={onClose}
+        title={modalTitle}
+      >
         {modalContent}
-      </Modal>
+      </Console>
       <Tab.Group>
         <Tab.List className="flex space-x-2 border-b mb-6">
           <Tab
