@@ -1,6 +1,4 @@
-import "../styles/globals.css";
 import "@fontsource/roboto";
-import { ToastProvider } from "react-toast-notifications";
 import { ChakraProvider, extendTheme } from "@chakra-ui/react";
 
 const theme = extendTheme({
@@ -10,14 +8,10 @@ const theme = extendTheme({
   },
 });
 
-import Toast from "components/Toast";
-
 const App = ({ Component, pageProps }) => {
   return (
     <ChakraProvider theme={theme}>
-      <ToastProvider components={{ Toast }} placement="top-center" autoDismiss>
-        <Component {...pageProps} />
-      </ToastProvider>
+      <Component {...pageProps} />
     </ChakraProvider>
   );
 };

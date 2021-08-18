@@ -1,7 +1,4 @@
 - ChakraUI
-  - config/
-    - index.jsx
-    - [id].jsx
   - _app.js
   - _document.js
 - Tab per separare le tabelle

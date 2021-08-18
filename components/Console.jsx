@@ -44,7 +44,8 @@ const Console = ({ isOpen, onClose, title, children = [] }) => {
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  className="h-6 w-6"
+                  width="1.5rem"
+                  height="1.5rem"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
