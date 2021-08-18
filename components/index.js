@@ -1,8 +1,9 @@
 import Button from "./Button";
 import Layout from "./Layout";
 import Modal from "./Modal";
-import Nav from "./Nav";
 import Table from "./Table";
 import Toast from "./Toast";
+import DesktopNav from "./nav/DesktopNav";
+import MobileNav from "./nav/MobileNav";
 
-export { Button, Layout, Modal, Nav, Table, Toast };
+export { Button, Layout, Modal, Table, Toast, DesktopNav, MobileNav };
