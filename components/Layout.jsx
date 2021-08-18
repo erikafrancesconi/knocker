@@ -10,6 +10,7 @@ import {
   Collapse,
   useColorModeValue,
   useDisclosure,
+  Heading,
 } from "@chakra-ui/react";
 import { HamburgerIcon, CloseIcon } from "@chakra-ui/icons";
 
@@ -108,14 +109,12 @@ const Layout = ({ title = "", children }) => {
         </Collapse>
       </Box>
 
-      <header className="bg-white shadow">
-        <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-          <h1 className="text-3xl font-bold text-gray-900">{title}</h1>
-        </div>
-      </header>
-      <main>
-        <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">{children}</div>
-      </main>
+      <Stack spacing={6} m={6}>
+        <Heading as="h1" size="lg">
+          {title}
+        </Heading>
+        <Box>{children}</Box>
+      </Stack>
     </div>
   );
 };
