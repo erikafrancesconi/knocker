@@ -1,8 +1,6 @@
 import { test } from "@jest/globals";
 import { render } from "@testing-library/react";
 
-import { ToastProvider } from "react-toast-notifications";
-
 import Configurations from "pages/config";
 
 jest.mock("next/router", () => ({
@@ -17,9 +15,5 @@ jest.mock("next/router", () => ({
 }));
 
 test("renders correctly", async () => {
-  render(
-    <ToastProvider>
-      <Configurations />
-    </ToastProvider>
-  );
+  render(<Configurations />);
 });

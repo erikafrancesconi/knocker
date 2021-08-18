@@ -1,10 +1,8 @@
 import { useState } from "react";
 
-import router from "next/router";
-
 import { Tr, Td, VStack, Box, Text, Checkbox, Button } from "@chakra-ui/react";
 
-const ConfigRow = ({ data, run }) => {
+const ConfigRow = ({ data = [], run }) => {
   const { id, name, filepath, compose, services } = data;
 
   const [servicesObj, setServicesObj] = useState({});
@@ -31,20 +29,6 @@ const ConfigRow = ({ data, run }) => {
     run(name, filepath, compose, servizi);
   };
 
-  const deleteConfiguration = async () => {
-    const res = await fetch("/api/db/config/remove", {
-      body: JSON.stringify({ id }),
-      headers: {
-        "Content-Type": "application/json",
-      },
-      method: "POST",
-    });
-
-    if (res.ok) {
-      router.push("/config");
-    }
-  };
-
   return (
     <Tr>
       <Td valign="top">{name}</Td>
@@ -52,18 +36,19 @@ const ConfigRow = ({ data, run }) => {
         <VStack align="start">
           <Text>{filepath}</Text>
           <Box>
-            {services.map((service, idx) => (
-              <Box key={idx}>
-                <Checkbox
-                  name={service}
-                  id={`${id}-${service}`}
-                  onChange={updateServiceState}
-                  isChecked={servicesObj[service] || false}
-                >
-                  {service}
-                </Checkbox>
-              </Box>
-            ))}
+            {services &&
+              services.map((service, idx) => (
+                <Box key={idx}>
+                  <Checkbox
+                    name={service}
+                    id={`${id}-${service}`}
+                    onChange={updateServiceState}
+                    isChecked={servicesObj[service] || false}
+                  >
+                    {service}
+                  </Checkbox>
+                </Box>
+              ))}
           </Box>
         </VStack>
       </Td>

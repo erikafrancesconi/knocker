@@ -1,8 +1,8 @@
 import { test } from "@jest/globals";
 import { render } from "@testing-library/react";
 
-import Toast from "components/Toast";
+import DesktopNav from "components/nav/DesktopNav";
 
 test("renders correctly", async () => {
-  render(<Toast />);
+  render(<DesktopNav />);
 });
