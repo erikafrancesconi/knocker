@@ -5,5 +5,15 @@ import Toast from "./Toast";
 import DesktopNav from "./nav/DesktopNav";
 import MobileNav from "./nav/MobileNav";
 import Console from "./Console";
+import ConfigRow from "./ConfigRow";
 
-export { Button, Layout, DataTable, Toast, DesktopNav, MobileNav, Console };
+export {
+  Button,
+  Layout,
+  DataTable,
+  Toast,
+  DesktopNav,
+  MobileNav,
+  Console,
+  ConfigRow,
+};

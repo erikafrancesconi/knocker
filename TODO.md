@@ -1,5 +1,4 @@
 - ChakraUI
-  - index.jsx
   - config/
     - index.jsx
     - [id].jsx

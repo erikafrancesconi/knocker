@@ -1,19 +1,23 @@
-import Link from "next/link";
-
 import { readFile } from "fs/promises";
 import YAML from "yaml";
 
-import { useToasts } from "react-toast-notifications";
 import { useModal } from "hooks/useModal";
 
 import { connect } from "db";
-import { Layout, Console } from "components";
-import Row from "components/config/Row";
+import { Layout, Console, ConfigRow } from "components";
 
-import { useDisclosure } from "@chakra-ui/react";
+import {
+  useDisclosure,
+  useToast,
+  Table,
+  Thead,
+  Tbody,
+  Tr,
+  Th,
+} from "@chakra-ui/react";
 
 const Configurations = ({ data = [] }) => {
-  const { addToast } = useToasts();
+  const toast = useToast();
 
   const { openModal, modalContent, modalTitle, appendContent } = useModal();
 
@@ -47,8 +51,11 @@ const Configurations = ({ data = [] }) => {
         appendContent(value.split("\n"));
       }
     } catch (err) {
-      addToast("Something went wrong.", {
-        appearance: "error",
+      toast({
+        title: "Something went wrong",
+        status: "error",
+        duration: 9000,
+        isClosable: true,
       });
     }
   };
@@ -63,64 +70,21 @@ const Configurations = ({ data = [] }) => {
       >
         {modalContent}
       </Console>
-      <h2 className="text-2xl font-bold text-gray-800 pb-4 flex justify-between">
-        Saved configurations
-        {/* eslint-disable-next-line @next/next/link-passhref */}
-        <Link href="/config/new">
-          <button
-            className="bg-blue-600 hover:bg-blue-800 text-white p-2 rounded righ"
-            title="New"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-            >
-              <path
-                fillRule="evenodd"
-                d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
-                clipRule="evenodd"
-              />
-            </svg>
-          </button>
-        </Link>
-      </h2>
-      <div className="flex flex-col">
-        <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-          <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
-            <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th
-                      scope="col"
-                      className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                    >
-                      Name
-                    </th>
-                    <th
-                      scope="col"
-                      className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                    >
-                      File
-                    </th>
-                    <th scope="col" className="relative px-6 py-3">
-                      <span className="sr-only">Edit</span>
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {data.length > 0 &&
-                    data.map((d, idx) => (
-                      <Row key={idx} data={d} run={runConfiguration} />
-                    ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
+      <Table variant="simple">
+        <Thead borderTopColor="gray.100" borderTopWidth={0.5}>
+          <Tr>
+            <Th>Name</Th>
+            <Th>File</Th>
+            <Th></Th>
+          </Tr>
+        </Thead>
+        <Tbody>
+          {data.length > 0 &&
+            data.map((d, idx) => (
+              <ConfigRow key={idx} data={d} run={runConfiguration} />
+            ))}
+        </Tbody>
+      </Table>
     </Layout>
   );
 };
