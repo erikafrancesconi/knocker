@@ -11,13 +11,19 @@ import {
 import { ChevronDownIcon } from "@chakra-ui/icons";
 
 import { default as NextLink } from "next/link";
+import { useRouter } from "next/router";
 
 const MobileNav = ({ items = [] }) => {
+  const router = useRouter();
+
   return (
     <Stack
       bg={useColorModeValue("white", "gray.800")}
       p={4}
       display={{ md: "none" }}
+      borderBottom={1}
+      borderStyle={"solid"}
+      borderColor={useColorModeValue("gray.200", "gray.900")}
     >
       {items.map((navItem) => (
         <MobileNavItem key={navItem.label} {...navItem} />
@@ -27,6 +33,7 @@ const MobileNav = ({ items = [] }) => {
 };
 
 const MobileNavItem = ({ label, children, href }) => {
+  const router = useRouter();
   const { isOpen, onToggle } = useDisclosure();
 
   return (
@@ -44,7 +51,7 @@ const MobileNavItem = ({ label, children, href }) => {
         >
           <Text
             fontWeight={600}
-            color={useColorModeValue("gray.600", "gray.200")}
+            color={router.asPath === href ? "blue.400" : ""}
           >
             {label}
           </Text>

@@ -1,6 +1,5 @@
 import {
   Box,
-  Flex,
   Text,
   Stack,
   Icon,
@@ -10,11 +9,14 @@ import {
   PopoverContent,
   useColorModeValue,
 } from "@chakra-ui/react";
-import { ChevronDownIcon, ChevronRightIcon } from "@chakra-ui/icons";
+import { ChevronDownIcon } from "@chakra-ui/icons";
 
 import { default as NextLink } from "next/link";
+import { useRouter } from "next/router";
 
 const DesktopNav = ({ items = [] }) => {
+  const router = useRouter();
+
   const linkHoverColor = useColorModeValue("gray.800", "white");
   const popoverContentBgColor = useColorModeValue("white", "gray.800");
 
@@ -23,16 +25,18 @@ const DesktopNav = ({ items = [] }) => {
       {items.map((navItem) => (
         <Box key={navItem.label}>
           {!navItem.children || navItem.children.length === 0 ? (
-            <Link
-              as={NextLink}
-              href={navItem.href ?? "/"}
-              _hover={{
-                textDecoration: "none",
-                color: linkHoverColor,
-              }}
-            >
-              {navItem.label}
-            </Link>
+            <NextLink href={navItem.href ?? "/"}>
+              <Link
+                href={navItem.href ?? "/"}
+                color={router.asPath === navItem.href ? "blue.400" : ""}
+                _hover={{
+                  textDecoration: "none",
+                  color: linkHoverColor,
+                }}
+              >
+                {navItem.label}
+              </Link>
+            </NextLink>
           ) : (
             <Popover trigger={"hover"} placement={"bottom-start"}>
               <PopoverTrigger>
@@ -83,6 +87,8 @@ const DesktopNav = ({ items = [] }) => {
 };
 
 const DesktopSubNav = ({ label, href, subLabel }) => {
+  const router = useRouter();
+
   return (
     <NextLink href={href}>
       <Link
@@ -92,6 +98,7 @@ const DesktopSubNav = ({ label, href, subLabel }) => {
         p={2}
         rounded={"md"}
         _hover={{ bg: useColorModeValue("blue.50", "gray.900") }}
+        color={router.asPath === href ? "blue.400" : ""}
       >
         <Stack direction={"row"} align={"center"}>
           <Box>
