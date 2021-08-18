@@ -1,21 +1,19 @@
 import { useEffect, useState } from "react";
 
-import { useToasts } from "react-toast-notifications";
-
 import { Tab } from "@headlessui/react";
 
 import { useModal } from "hooks/useModal";
 import { useDocker } from "hooks/useDocker";
 
-import { Layout, Table, Console } from "components";
+import { Layout, DataTable, Console } from "components";
 
-import { useDisclosure } from "@chakra-ui/react";
+import { useDisclosure, Box, useToast } from "@chakra-ui/react";
 
 const Home = () => {
   const [headers, setHeaders] = useState([]);
   const [data, setData] = useState({ running: [], exited: [] });
 
-  const { addToast } = useToasts();
+  const toast = useToast();
 
   const { openModal, modalContent, modalTitle, appendContent } = useModal();
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -92,8 +90,11 @@ const Home = () => {
         appendContent(value.split("\n"));
       }
     } catch (err) {
-      addToast("Something went wrong.", {
-        appearance: "error",
+      toast({
+        title: "Something went wrong",
+        status: "error",
+        duration: 9000,
+        isClosable: true,
       });
     }
   };
@@ -113,10 +114,6 @@ const Home = () => {
     }
   };
 
-  const classNames = (...classes) => {
-    return classes.filter(Boolean).join(" ");
-  };
-
   return (
     <Layout title="Dashboard">
       <Console
@@ -127,92 +124,63 @@ const Home = () => {
       >
         {modalContent}
       </Console>
-      <Tab.Group>
-        <Tab.List className="flex space-x-2 border-b mb-6">
-          <Tab
-            className={({ selected }) =>
-              classNames(
-                "text-sm font-medium rounded-t-lg border-t border-l border-r px-4 py-2",
-                "focus:outline-none focus:ring-2 ring-offset-2 ring-offset-blue-400 ring-white ring-opacity-60",
-                selected ? "bg-blue-700 text-white" : "text-blue-700 "
-              )
-            }
-          >
-            Containers
-          </Tab>
-          <Tab
-            className={({ selected }) =>
-              classNames(
-                "text-sm font-medium rounded-t-lg border-t border-l border-r px-4 py-2",
-                "focus:outline-none focus:ring-2 ring-offset-2 ring-offset-blue-400 ring-white ring-opacity-60",
-                selected ? "bg-blue-700 text-white" : "text-blue-700 "
-              )
-            }
-          >
-            Volumes
-          </Tab>
-        </Tab.List>
-        <Tab.Panels className="mt-2">
-          <Tab.Panel>
-            <div className="mb-16">
-              <Table
-                title="Running containers"
-                columns={headers}
-                rows={data.running}
-                refreshData={() => fetchData("")}
-                functions={[
-                  {
-                    title: "Logs",
-                    tooltip: "Show Logs",
-                    onClick: showLogs,
-                    color: "blue",
-                    callback: () => {},
-                  },
-                  {
-                    title: "Stop",
-                    tooltip: "Stop Container",
-                    onClick: stopContainer,
-                    color: "red",
-                    callback: () => {
-                      fetchData("");
-                      fetchData('--all --filter "status=exited"');
-                    },
-                  },
-                ]}
-              />
-            </div>
-            <div>
-              <Table
-                title="Stopped containers"
-                columns={headers}
-                rows={data.exited}
-                refreshData={() => fetchData('--all --filter "status=exited"')}
-                deleteData={pruneStoppedContainers}
-                functions={[
-                  {
-                    title: "Start",
-                    tooltip: "Start Container",
-                    onClick: startContainer,
-                    color: "green",
-                    callback: () => {
-                      fetchData("");
-                      fetchData('--all --filter "status=exited"');
-                    },
-                  },
-                  {
-                    title: "Remove",
-                    tooltip: "Remove Container",
-                    onClick: removeContainer,
-                    color: "red",
-                    callback: () => fetchData('--all --filter "status=exited"'),
-                  },
-                ]}
-              />
-            </div>
-          </Tab.Panel>
-          <Tab.Panel>Content 2</Tab.Panel>
-        </Tab.Panels>
-      </Tab.Group>
+
+      <Box marginBottom={8}>
+        <DataTable
+          title="Running containers"
+          columns={headers}
+          rows={data.running}
+          refreshData={() => fetchData("")}
+          functions={[
+            {
+              title: "Logs",
+              tooltip: "Show Logs",
+              onClick: showLogs,
+              color: "blue",
+              callback: () => {},
+            },
+            {
+              title: "Stop",
+              tooltip: "Stop Container",
+              onClick: stopContainer,
+              color: "red",
+              callback: () => {
+                fetchData("");
+                fetchData('--all --filter "status=exited"');
+              },
+            },
+          ]}
+        />
+      </Box>
+
+      <Box>
+        <DataTable
+          title="Stopped containers"
+          columns={headers}
+          rows={data.exited}
+          refreshData={() => fetchData('--all --filter "status=exited"')}
+          deleteData={pruneStoppedContainers}
+          functions={[
+            {
+              title: "Start",
+              tooltip: "Start Container",
+              onClick: startContainer,
+              color: "green",
+              callback: () => {
+                fetchData("");
+                fetchData('--all --filter "status=exited"');
+              },
+            },
+            {
+              title: "Remove",
+              tooltip: "Remove Container",
+              onClick: removeContainer,
+              color: "red",
+              callback: () => fetchData('--all --filter "status=exited"'),
+            },
+          ]}
+        />
+      </Box>
     </Layout>
   );
 };

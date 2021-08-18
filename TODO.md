@@ -5,6 +5,7 @@
     - [id].jsx
   - _app.js
   - _document.js
+- Tab per separare le tabelle
 - Remove database, use config file
 - Docker API
 - React Table

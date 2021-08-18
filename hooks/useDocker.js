@@ -1,7 +1,7 @@
-import { useToasts } from "react-toast-notifications";
+import { useToast } from "@chakra-ui/react";
 
 export const useDocker = () => {
-  const { addToast } = useToasts();
+  const toast = useToast();
 
   const executeCommand = async (
     command,
@@ -21,8 +21,12 @@ export const useDocker = () => {
       });
 
       if (res.status !== 200) {
-        addToast(res.statusText, {
-          appearance: "error",
+        toast({
+          title: res.statusText,
+          status: "error",
+          duration: 9000,
+          isClosable: true,
+          position: "top",
         });
         return "KO";
       }
@@ -30,16 +34,24 @@ export const useDocker = () => {
       const { result } = await res.json();
 
       if (result.replaceAll("\n", "") === containerId) {
-        addToast(`Container ${containerName} ${command.resok}.`, {
-          appearance: "success",
+        toast({
+          title: `Container ${containerName} ${command.resok}.`,
+          status: "success",
+          duration: 9000,
+          isClosable: true,
+          position: "top",
         });
         callback();
         return "OK";
       }
     } catch (err) {
       console.error(err);
-      addToast("Something went wrong.", {
-        appearance: "error",
+      toast({
+        title: "Something went wrong",
+        status: "error",
+        duration: 9000,
+        isClosable: true,
+        position: "top",
       });
       return "KO";
     }

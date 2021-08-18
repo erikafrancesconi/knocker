@@ -110,9 +110,7 @@ const Layout = ({ title = "", children }) => {
       </Box>
 
       <Stack spacing={6} m={6}>
-        <Heading as="h1" size="lg">
-          {title}
-        </Heading>
+        <Heading size="lg">{title}</Heading>
         <Box>{children}</Box>
       </Stack>
     </div>
