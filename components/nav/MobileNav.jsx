@@ -14,8 +14,6 @@ import { default as NextLink } from "next/link";
 import { useRouter } from "next/router";
 
 const MobileNav = ({ items = [] }) => {
-  const router = useRouter();
-
   return (
     <Stack
       bg={useColorModeValue("white", "gray.800")}
