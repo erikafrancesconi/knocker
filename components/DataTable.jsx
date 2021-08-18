@@ -52,7 +52,7 @@ const DataTable = ({
   return (
     <>
       <Flex>
-        <Heading as="h3" size="md" color="blue.400" paddingBottom={4}>
+        <Heading as="h3" size="md" color="blue.400" fontWeight="normal">
           {title}
         </Heading>
         <Spacer />

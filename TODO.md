@@ -1,3 +1,2 @@
-- Tab per separare le tabelle
 - Docker API
 - React Table

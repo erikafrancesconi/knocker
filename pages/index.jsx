@@ -5,7 +5,16 @@ import { useDocker } from "hooks/useDocker";
 
 import { Layout, DataTable, Console } from "components";
 
-import { useDisclosure, Box, useToast } from "@chakra-ui/react";
+import {
+  useDisclosure,
+  Box,
+  useToast,
+  Tabs,
+  TabList,
+  TabPanels,
+  Tab,
+  TabPanel,
+} from "@chakra-ui/react";
 
 const Home = () => {
   const [headers, setHeaders] = useState([]);
@@ -123,62 +132,70 @@ const Home = () => {
         {modalContent}
       </Console>
 
-      <Box marginBottom={8}>
-        <DataTable
-          title="Running containers"
-          columns={headers}
-          rows={data.running}
-          refreshData={() => fetchData("")}
-          functions={[
-            {
-              title: "Logs",
-              tooltip: "Show Logs",
-              onClick: showLogs,
-              color: "blue",
-              callback: () => {},
-            },
-            {
-              title: "Stop",
-              tooltip: "Stop Container",
-              onClick: stopContainer,
-              color: "red",
-              callback: () => {
-                fetchData("");
-                fetchData('--all --filter "status=exited"');
-              },
-            },
-          ]}
-        />
-      </Box>
+      <Tabs variant="enclosed-colored">
+        <TabList>
+          <Tab>Running</Tab>
+          <Tab>Stopped</Tab>
+        </TabList>
 
-      <Box>
-        <DataTable
-          title="Stopped containers"
-          columns={headers}
-          rows={data.exited}
-          refreshData={() => fetchData('--all --filter "status=exited"')}
-          deleteData={pruneStoppedContainers}
-          functions={[
-            {
-              title: "Start",
-              tooltip: "Start Container",
-              onClick: startContainer,
-              color: "green",
-              callback: () => {
-                fetchData("");
-                fetchData('--all --filter "status=exited"');
-              },
-            },
-            {
-              title: "Remove",
-              tooltip: "Remove Container",
-              onClick: removeContainer,
-              color: "red",
-              callback: () => fetchData('--all --filter "status=exited"'),
-            },
-          ]}
-        />
-      </Box>
+        <TabPanels pt={2}>
+          <TabPanel>
+            <DataTable
+              title="Running containers"
+              columns={headers}
+              rows={data.running}
+              refreshData={() => fetchData("")}
+              functions={[
+                {
+                  title: "Logs",
+                  tooltip: "Show Logs",
+                  onClick: showLogs,
+                  color: "blue",
+                  callback: () => {},
+                },
+                {
+                  title: "Stop",
+                  tooltip: "Stop Container",
+                  onClick: stopContainer,
+                  color: "red",
+                  callback: () => {
+                    fetchData("");
+                    fetchData('--all --filter "status=exited"');
+                  },
+                },
+              ]}
+            />
+          </TabPanel>
+          <TabPanel>
+            <DataTable
+              title="Stopped containers"
+              columns={headers}
+              rows={data.exited}
+              refreshData={() => fetchData('--all --filter "status=exited"')}
+              deleteData={pruneStoppedContainers}
+              functions={[
+                {
+                  title: "Start",
+                  tooltip: "Start Container",
+                  onClick: startContainer,
+                  color: "green",
+                  callback: () => {
+                    fetchData("");
+                    fetchData('--all --filter "status=exited"');
+                  },
+                },
+                {
+                  title: "Remove",
+                  tooltip: "Remove Container",
+                  onClick: removeContainer,
+                  color: "red",
+                  callback: () => fetchData('--all --filter "status=exited"'),
+                },
+              ]}
+            />
+          </TabPanel>
+        </TabPanels>
+      </Tabs>
     </Layout>
   );
 };
