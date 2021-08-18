@@ -1,11 +1,10 @@
 import { readFile } from "fs/promises";
 import YAML from "yaml";
 
+import configData from "config/dockerfiles.json";
+
 import { useModal } from "hooks/useModal";
-
-import { connect } from "db";
 import { Layout, Console, ConfigRow } from "components";
-
 import {
   useDisclosure,
   useToast,
@@ -92,19 +91,9 @@ const Configurations = ({ data = [] }) => {
 export const getStaticProps = async () => {
   let data = [];
 
-  const client = await connect().catch((err) => {
-    console.log("Unable to connect", err.stack);
-    return {
-      props: { data },
-    };
-  });
-
   try {
-    const text = "SELECT * FROM configurations ORDER BY name";
-    const resp = await client.query(text);
-
     data = await Promise.all(
-      resp.rows.map(async (row) => {
+      configData.map(async (row) => {
         const services = [];
         if (row.filepath.endsWith(".yml")) {
           const file = await readFile(row.filepath, "utf-8");
@@ -119,8 +108,6 @@ export const getStaticProps = async () => {
     );
   } catch (err) {
     console.error(err.stack);
-  } finally {
-    client.release();
   }
 
   return {

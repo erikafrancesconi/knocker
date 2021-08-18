@@ -1,0 +1,12 @@
+[
+  {
+    "name": "Doqu",
+    "filepath": "/home/erika/Lavori/Pragma2000/doqu_docker/docker-compose.yml",
+    "compose": true
+  },
+  {
+    "name": "RGT Strapi",
+    "filepath": "/home/erika/Lavori/RGT/rgt-strapi/docker-compose.yml",
+    "compose": true
+  }
+]
