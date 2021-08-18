@@ -1,7 +1,5 @@
 import { useEffect, useState } from "react";
 
-import { Tab } from "@headlessui/react";
-
 import { useModal } from "hooks/useModal";
 import { useDocker } from "hooks/useDocker";
 
