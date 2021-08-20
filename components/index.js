@@ -1,5 +1,5 @@
 import Layout from "./Layout";
-import DataTable from "./DataTable";
+import DataTable from "./tables/DataTable";
 import DesktopNav from "./nav/DesktopNav";
 import MobileNav from "./nav/MobileNav";
 import Console from "./Console";
