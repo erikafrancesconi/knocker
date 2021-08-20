@@ -14,7 +14,6 @@ import {
   Tab,
   TabPanel,
 } from "@chakra-ui/react";
-import { getElapsedTime } from "utils/client";
 
 const Home = () => {
   const [data, setData] = useState({ running: [], exited: [] });
@@ -45,33 +44,16 @@ const Home = () => {
     try {
       const result = await listContainers(all, exited);
 
-      const newData = result.map((row) => {
-        const { Id, Image, Created, Status, Ports, Names, State } = row;
-        const newRow = [];
-        newRow.push(State);
-        newRow.push(Id.substring(0, 12));
-        newRow.push(Image);
-        newRow.push(getElapsedTime(Created));
-        newRow.push(Status);
-        newRow.push(
-          Ports.map((port) => {
-            const { Type, PrivatePort, PublicPort } = port;
-            return `${Type}:${PrivatePort}->${PublicPort}`;
-          }).join("<br />")
-        );
-        newRow.push(Names.join(","));
-        return newRow;
-      });
       if (!exited) {
         setData((data) => ({
-          running: newData.filter((d) => d[0] !== "exited"),
+          running: result.filter((row) => row.State !== "exited"),
           exited: data.exited,
         }));
       }
       if (exited || all) {
         setData((data) => ({
           running: data.running,
-          exited: newData.filter((d) => d[0] === "exited"),
+          exited: result.filter((row) => row.State === "exited"),
         }));
       }
     } catch (error) {

@@ -4,7 +4,6 @@ import {
   Tbody,
   Tr,
   Th,
-  Td,
   Heading,
   Flex,
   Box,
@@ -12,6 +11,8 @@ import {
   Button,
   Stack,
 } from "@chakra-ui/react";
+
+import { DataTableRow } from "components";
 
 const DataTable = ({
   title,
@@ -97,48 +98,7 @@ const DataTable = ({
           <Tbody>
             {rows.length > 0 &&
               rows.map((d, idx) => (
-                <Tr key={idx}>
-                  <Td>
-                    <Box
-                      display="inline-block"
-                      width={6}
-                      height={6}
-                      borderRadius="full"
-                      backgroundColor={
-                        d[0] === "running"
-                          ? "green.400"
-                          : d[0] === "exited"
-                          ? "red.400"
-                          : "yellow.400"
-                      }
-                    ></Box>
-                  </Td>
-                  {d
-                    .filter((_, idx) => idx > 0)
-                    .map((cell, idx) => (
-                      <Td
-                        key={idx}
-                        dangerouslySetInnerHTML={{
-                          __html: cell.trim(),
-                        }}
-                      ></Td>
-                    ))}
-                  <Td>
-                    <Stack direction="row" spacing={2} align="center">
-                      {functions.map((f, idx) => (
-                        <Button
-                          key={idx}
-                          colorScheme={f.color}
-                          title={f.tooltip}
-                          onClick={() => f.onClick(d[1], d[6], f.callback)}
-                          size="xs"
-                        >
-                          {f.title}
-                        </Button>
-                      ))}
-                    </Stack>
-                  </Td>
-                </Tr>
+                <DataTableRow key={idx} data={d} functions={functions} />
               ))}
           </Tbody>
         </Table>
