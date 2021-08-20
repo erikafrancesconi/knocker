@@ -3,6 +3,23 @@ import { useToast } from "@chakra-ui/react";
 export const useDocker = () => {
   const toast = useToast();
 
+  const listContainers = async (all = false, exited = false) => {
+    const options = `${all || exited ? "all=true" : ""}${
+      exited ? '&filters={"status":["exited"]}' : ""
+    }`;
+
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_APIURL}${process.env.NEXT_PUBLIC_APIVERSION}/containers/json?${options}`
+      );
+      const result = await res.json();
+      return result;
+    } catch (error) {
+      console.error(error);
+      return [];
+    }
+  };
+
   const executeCommand = async (
     command,
     containerId,
@@ -85,6 +102,7 @@ export const useDocker = () => {
   };
 
   return {
+    listContainers,
     startContainer,
     stopContainer,
     removeContainer,

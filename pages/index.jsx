@@ -7,7 +7,6 @@ import { Layout, DataTable, Console } from "components";
 
 import {
   useDisclosure,
-  Box,
   useToast,
   Tabs,
   TabList,
@@ -15,9 +14,9 @@ import {
   Tab,
   TabPanel,
 } from "@chakra-ui/react";
+import { getElapsedTime } from "utils/client";
 
 const Home = () => {
-  const [headers, setHeaders] = useState([]);
   const [data, setData] = useState({ running: [], exited: [] });
 
   const toast = useToast();
@@ -25,55 +24,64 @@ const Home = () => {
   const { openModal, modalContent, modalTitle, appendContent } = useModal();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const { startContainer, stopContainer, removeContainer } = useDocker();
+  const { listContainers, startContainer, stopContainer, removeContainer } =
+    useDocker();
 
   const openConsole = (title) => {
     openModal(title);
     onOpen();
   };
 
-  const fetchData = async (options = "") => {
+  const tableTitles = [
+    "Container ID",
+    "Image",
+    "Created",
+    "Status",
+    "Ports",
+    "Names",
+  ];
+
+  const fetchDataFromAPI = async (all = false, exited = false) => {
     try {
-      const res = await fetch("/api/docker/ps", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ options }),
+      const result = await listContainers(all, exited);
+
+      const newData = result.map((row) => {
+        const { Id, Image, Created, Status, Ports, Names, State } = row;
+        const newRow = [];
+        newRow.push(State);
+        newRow.push(Id.substring(0, 12));
+        newRow.push(Image);
+        newRow.push(getElapsedTime(Created));
+        newRow.push(Status);
+        newRow.push(
+          Ports.map((port) => {
+            const { Type, PrivatePort, PublicPort } = port;
+            return `${Type}:${PrivatePort}->${PublicPort}`;
+          }).join("<br />")
+        );
+        newRow.push(Names.join(","));
+        return newRow;
       });
-
-      const { result } = await res.json();
-
-      let rows = result
-        .split("\n")
-        .map((row) => row.split("  ").filter((r) => r !== ""))
-        .filter((row) => row.length > 0);
-
-      rows[0].splice(2, 1); // Command is useless
-      setHeaders(rows[0]);
-
-      rows = rows.filter((row, idx) => idx > 0);
-      rows.forEach((d) => {
-        if (!d[4].trim().startsWith("Up") || d.length < 7) {
-          // Inserting white element for ports if process is not up
-          d.splice(5, 0, "");
-        }
-        d[5] = d[5].split(",").join("<br />");
-        d.splice(2, 1); // Command is useless
-      });
-      if (!options) {
-        setData((data) => ({ running: rows, exited: data.exited }));
-      } else {
-        setData((data) => ({ running: data.running, exited: rows }));
+      if (!exited) {
+        setData((data) => ({
+          running: newData.filter((d) => d[0] !== "exited"),
+          exited: data.exited,
+        }));
       }
-    } catch (err) {
-      console.error(err);
+      if (exited || all) {
+        setData((data) => ({
+          running: data.running,
+          exited: newData.filter((d) => d[0] === "exited"),
+        }));
+      }
+    } catch (error) {
+      console.error(error);
     }
   };
 
   useEffect(() => {
-    fetchData("");
-    fetchData('--all --filter "status=exited"');
+    fetchDataFromAPI({ all: true });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const showLogs = async (containerId, containerName) => {
@@ -114,7 +122,7 @@ const Home = () => {
 
       const { result } = await res.json();
       if (result === "OK") {
-        fetchData('--all --filter "status=exited"');
+        fetchDataFromAPI({ exited: true });
       }
     } catch (err) {
       console.error(err);
@@ -142,9 +150,9 @@ const Home = () => {
           <TabPanel>
             <DataTable
               title="Running containers"
-              columns={headers}
+              columns={tableTitles}
               rows={data.running}
-              refreshData={() => fetchData("")}
+              refreshData={() => fetchDataFromAPI()}
               functions={[
                 {
                   title: "Logs",
@@ -159,8 +167,7 @@ const Home = () => {
                   onClick: stopContainer,
                   color: "red",
                   callback: () => {
-                    fetchData("");
-                    fetchData('--all --filter "status=exited"');
+                    fetchDataFromAPI({ all: true });
                   },
                 },
               ]}
@@ -169,9 +176,9 @@ const Home = () => {
           <TabPanel>
             <DataTable
               title="Stopped containers"
-              columns={headers}
+              columns={tableTitles}
               rows={data.exited}
-              refreshData={() => fetchData('--all --filter "status=exited"')}
+              refreshData={() => fetchDataFromAPI({ exited: true })}
               deleteData={pruneStoppedContainers}
               functions={[
                 {
@@ -180,8 +187,7 @@ const Home = () => {
                   onClick: startContainer,
                   color: "green",
                   callback: () => {
-                    fetchData("");
-                    fetchData('--all --filter "status=exited"');
+                    fetchDataFromAPI({ all: true });
                   },
                 },
                 {
@@ -189,7 +195,7 @@ const Home = () => {
                   tooltip: "Remove Container",
                   onClick: removeContainer,
                   color: "red",
-                  callback: () => fetchData('--all --filter "status=exited"'),
+                  callback: () => fetchDataFromAPI({ exited: true }),
                 },
               ]}
             />
