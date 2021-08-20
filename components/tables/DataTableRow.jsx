@@ -1,5 +1,3 @@
-import { useState } from "react";
-
 import { Tr, Td, Box, Stack, Text } from "@chakra-ui/react";
 
 import { getElapsedTime } from "utils/client";
