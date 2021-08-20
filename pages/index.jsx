@@ -141,7 +141,6 @@ const Home = () => {
                   tooltip: "Show Logs",
                   onClick: showLogs,
                   color: "blue",
-                  callback: () => {},
                 },
                 {
                   title: "Stop",

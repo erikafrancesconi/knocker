@@ -1,6 +1,9 @@
-import { Tr, Td, Box, Button, Stack, Text } from "@chakra-ui/react";
+import { useState } from "react";
+
+import { Tr, Td, Box, Stack, Text } from "@chakra-ui/react";
 
 import { getElapsedTime } from "utils/client";
+import { DataTableRowButton } from "components";
 
 const DataTableRow = ({ data = {}, functions = [] }) => {
   const Id = data.Id.substring(0, 12);
@@ -42,15 +45,13 @@ const DataTableRow = ({ data = {}, functions = [] }) => {
       <Td>
         <Stack direction="row" spacing={2} align="center">
           {functions.map((f, idx) => (
-            <Button
+            <DataTableRowButton
               key={idx}
-              colorScheme={f.color}
-              title={f.tooltip}
-              onClick={() => f.onClick(Id, Image, f.callback)}
-              size="xs"
-            >
-              {f.title}
-            </Button>
+              color={f.color}
+              title={f.title}
+              tooltip={f.tooltip}
+              clickHandler={() => f.onClick(Id, Image, f.callback)}
+            />
           ))}
         </Stack>
       </Td>
