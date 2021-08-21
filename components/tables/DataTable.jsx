@@ -1,3 +1,5 @@
+import { useState, useRef } from "react";
+
 import {
   Table,
   Thead,
@@ -10,6 +12,12 @@ import {
   Spacer,
   Button,
   Stack,
+  AlertDialog,
+  AlertDialogBody,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogContent,
+  AlertDialogOverlay,
 } from "@chakra-ui/react";
 
 import { DataTableRow } from "components";
@@ -22,31 +30,69 @@ const DataTable = ({
   deleteData,
   functions = [],
 }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const onClose = () => setIsOpen(false);
+  const cancelRef = useRef();
+
   let btnDelete = null;
   if (deleteData) {
     btnDelete = (
-      <Button
-        colorScheme="red"
-        title="Prune all stopped containers"
-        onClick={deleteData}
-        size="sm"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="1.5rem"
-          height="1.5rem"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
+      <>
+        <Button
+          colorScheme="red"
+          title="Prune all stopped containers"
+          onClick={() => setIsOpen(true)}
+          size="sm"
         >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-          />
-        </svg>
-      </Button>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="1.5rem"
+            height="1.5rem"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+            />
+          </svg>
+        </Button>
+        <AlertDialog
+          isOpen={isOpen}
+          leastDestructiveRef={cancelRef}
+          onClose={onClose}
+          isCentered={true}
+        >
+          <AlertDialogOverlay>
+            <AlertDialogContent>
+              <AlertDialogHeader fontSize="lg" fontWeight="bold">
+                Prune containers
+              </AlertDialogHeader>
+              <AlertDialogBody>
+                Are you sure you want to remove all stopped containers?
+              </AlertDialogBody>
+              <AlertDialogFooter>
+                <Button ref={cancelRef} onClick={onClose}>
+                  Cancel
+                </Button>
+                <Button
+                  colorScheme="red"
+                  onClick={() => {
+                    deleteData();
+                    onClose();
+                  }}
+                  ml={3}
+                >
+                  Remove
+                </Button>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialogOverlay>
+        </AlertDialog>
+      </>
     );
   }
 
