@@ -94,14 +94,23 @@ const Home = () => {
 
   const pruneStoppedContainers = async () => {
     try {
-      const res = await fetch("/api/docker/containerprune", {
-        method: "POST",
-      });
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_APIURL}${process.env.NEXT_PUBLIC_APIVERSION}/containers/prune`,
+        {
+          method: "POST",
+        }
+      );
 
-      const { result } = await res.json();
-      if (result === "OK") {
-        fetchDataFromAPI({ exited: true });
-      }
+      const { ContainersDeleted, SpaceReclaimed } = await res.json();
+      toast({
+        title: `${ContainersDeleted.length} containers removed`,
+        description: `${SpaceReclaimed} bytes of space reclaimed`,
+        status: "success",
+        duration: 9000,
+        isClosable: true,
+        position: "top",
+      });
+      fetchDataFromAPI({ exited: true });
     } catch (err) {
       console.error(err);
     }
