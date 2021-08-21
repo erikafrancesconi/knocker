@@ -2,3 +2,6 @@
   - https://docs.docker.com/engine/api/
 - Dockerizza
 - React Table
+  - Righe espandibili con più informazioni
+- Breadcrumb
+- Menu sulla riga
