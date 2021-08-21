@@ -70,13 +70,9 @@ const Home = () => {
     openConsole(containerName);
 
     try {
-      const res = await fetch("/api/docker/logs", {
-        method: "POST",
-        body: JSON.stringify({ containerId: containerId.trim() }),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_APIURL}${process.env.NEXT_PUBLIC_APIVERSION}/containers/${containerId}/logs?stdout=true&stderr=true&follow=true`
+      );
       const reader = res.body.pipeThrough(new TextDecoderStream()).getReader();
 
       while (true) {
