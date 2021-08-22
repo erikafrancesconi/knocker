@@ -1,7 +1,19 @@
-import { Tr, Td, Box, Stack, Text } from "@chakra-ui/react";
+import {
+  Tr,
+  Td,
+  Box,
+  Stack,
+  Text,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
+  Button,
+} from "@chakra-ui/react";
+
+import { ChevronDownIcon } from "@chakra-ui/icons";
 
 import { getElapsedTime } from "utils/client";
-import { DataTableRowButton } from "components";
 
 const DataTableRow = ({ data = {}, functions = [] }) => {
   const Id = data.Id.substring(0, 12);
@@ -42,15 +54,27 @@ const DataTableRow = ({ data = {}, functions = [] }) => {
       <Td>{Names.join(",")}</Td>
       <Td>
         <Stack direction="row" spacing={2} align="center">
-          {functions.map((f, idx) => (
-            <DataTableRowButton
-              key={idx}
-              color={f.color}
-              title={f.title}
-              tooltip={f.tooltip}
-              clickHandler={() => f.onClick(Id, Image, f.callback)}
-            />
-          ))}
+          <Menu>
+            <MenuButton
+              as={Button}
+              rightIcon={<ChevronDownIcon />}
+              colorScheme="blue"
+              size="xs"
+            >
+              Actions
+            </MenuButton>
+            <MenuList>
+              {functions.map((f, idx) => (
+                <MenuItem
+                  key={idx}
+                  icon={f.icon}
+                  onClick={() => f.onClick(Id, Image, f.callback)}
+                >
+                  {f.title}
+                </MenuItem>
+              ))}
+            </MenuList>
+          </Menu>
         </Stack>
       </Td>
     </Tr>

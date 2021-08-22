@@ -3,4 +3,5 @@
 - React Table
   - Righe espandibili con più informazioni
 - Breadcrumb
-- Menu sulla riga
+- Better icons
+- Tests

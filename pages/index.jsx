@@ -14,6 +14,7 @@ import {
   Tab,
   TabPanel,
 } from "@chakra-ui/react";
+import { CheckCircleIcon, DeleteIcon, InfoOutlineIcon } from "@chakra-ui/icons";
 
 const Home = () => {
   const [data, setData] = useState({ running: [], exited: [] });
@@ -142,16 +143,14 @@ const Home = () => {
               refreshData={() => fetchDataFromAPI()}
               functions={[
                 {
-                  title: "Logs",
-                  tooltip: "Show Logs",
+                  title: "Show Logs",
                   onClick: showLogs,
-                  color: "blue",
+                  icon: <InfoOutlineIcon />,
                 },
                 {
-                  title: "Stop",
-                  tooltip: "Stop Container",
+                  title: "Stop Container",
                   onClick: stopContainer,
-                  color: "red",
+                  icon: <DeleteIcon />,
                   callback: () => {
                     fetchDataFromAPI({ all: true });
                   },
@@ -168,19 +167,17 @@ const Home = () => {
               deleteData={pruneStoppedContainers}
               functions={[
                 {
-                  title: "Start",
-                  tooltip: "Start Container",
+                  title: "Start Container",
                   onClick: startContainer,
-                  color: "green",
+                  icon: <CheckCircleIcon />,
                   callback: () => {
                     fetchDataFromAPI({ all: true });
                   },
                 },
                 {
-                  title: "Remove",
-                  tooltip: "Remove Container",
+                  title: "Remove Container",
                   onClick: removeContainer,
-                  color: "red",
+                  icon: <DeleteIcon />,
                   callback: () => fetchDataFromAPI({ exited: true }),
                 },
               ]}
