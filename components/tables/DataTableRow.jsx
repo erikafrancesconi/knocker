@@ -2,7 +2,6 @@ import {
   Tr,
   Td,
   Box,
-  Stack,
   Text,
   Menu,
   MenuButton,
@@ -53,29 +52,27 @@ const DataTableRow = ({ data = {}, functions = [] }) => {
       </Td>
       <Td>{Names.join(",")}</Td>
       <Td>
-        <Stack direction="row" spacing={2} align="center">
-          <Menu>
-            <MenuButton
-              as={Button}
-              rightIcon={<ChevronDownIcon />}
-              colorScheme="blue"
-              size="xs"
-            >
-              Actions
-            </MenuButton>
-            <MenuList>
-              {functions.map((f, idx) => (
-                <MenuItem
-                  key={idx}
-                  icon={f.icon}
-                  onClick={() => f.onClick(Id, Image, f.callback)}
-                >
-                  {f.title}
-                </MenuItem>
-              ))}
-            </MenuList>
-          </Menu>
-        </Stack>
+        <Menu>
+          <MenuButton
+            as={Button}
+            rightIcon={<ChevronDownIcon />}
+            colorScheme="blue"
+            size="xs"
+          >
+            Actions
+          </MenuButton>
+          <MenuList>
+            {functions.map((f, idx) => (
+              <MenuItem
+                key={idx}
+                icon={f.icon}
+                onClick={() => f.onClick(Id, Image, f.callback)}
+              >
+                {f.title}
+              </MenuItem>
+            ))}
+          </MenuList>
+        </Menu>
       </Td>
     </Tr>
   );
