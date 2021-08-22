@@ -1,3 +1,4 @@
+import { useRef } from "react";
 import { useToast } from "@chakra-ui/react";
 
 export const useDocker = () => {
@@ -38,6 +39,19 @@ export const useDocker = () => {
     containerName,
     callback
   ) => {
+    const progressMsg =
+      command === "start"
+        ? "Starting"
+        : command === "stop"
+        ? "Stopping"
+        : "Removing";
+    toast({
+      title: `${progressMsg} container ${containerName}...`,
+      status: "info",
+      duration: 5000,
+      isClosable: true,
+      position: "top",
+    });
     try {
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_APIURL}${
