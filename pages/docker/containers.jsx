@@ -205,6 +205,11 @@ const Containers = () => {
                   },
                 },
                 {
+                  title: "View Logs",
+                  onClick: showLogs,
+                  icon: <InfoOutlineIcon />,
+                },
+                {
                   title: "Remove Container",
                   onClick: removeContainer,
                   icon: <DeleteIcon />,
