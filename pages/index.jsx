@@ -1,190 +1,58 @@
-import { useEffect, useState } from "react";
-
-import { useModal } from "hooks/useModal";
 import { useDocker } from "hooks/useDocker";
+import Link from "next/link";
 
-import { Layout, DataTable, Console } from "components";
+import { Layout } from "components";
 
-import {
-  useDisclosure,
-  useToast,
-  Tabs,
-  TabList,
-  TabPanels,
-  Tab,
-  TabPanel,
-} from "@chakra-ui/react";
-import { CheckCircleIcon, DeleteIcon, InfoOutlineIcon } from "@chakra-ui/icons";
+import { Box, Heading, Text } from "@chakra-ui/react";
+import { CheckCircleIcon, LinkIcon, WarningIcon } from "@chakra-ui/icons";
+import { useState, useEffect } from "react";
 
 const Home = () => {
-  const [data, setData] = useState({ running: [], exited: [] });
+  const [containers, setContainers] = useState({ running: 0, stopped: 0 });
 
-  const toast = useToast();
+  const { listContainers } = useDocker();
 
-  const { openModal, modalContent, modalTitle, appendContent } = useModal();
-  const { isOpen, onOpen, onClose } = useDisclosure();
-
-  const { listContainers, startContainer, stopContainer, removeContainer } =
-    useDocker();
-
-  const openConsole = (title) => {
-    openModal(title);
-    onOpen();
-  };
-
-  const tableTitles = [
-    "Container ID",
-    "Image",
-    "Created",
-    "Status",
-    "Ports",
-    "Names",
-  ];
-
-  const fetchDataFromAPI = async (all = false, exited = false) => {
+  const fetchData = async () => {
     try {
-      const result = await listContainers(all, exited);
-
-      if (!exited) {
-        setData((data) => ({
-          running: result.filter((row) => row.State !== "exited"),
-          exited: data.exited,
-        }));
-      }
-      if (exited || all) {
-        setData((data) => ({
-          running: data.running,
-          exited: result.filter((row) => row.State === "exited"),
-        }));
-      }
+      const res = await listContainers(true);
+      const running = res.filter((row) => row.State !== "exited").length;
+      const stopped = res.filter((row) => row.State === "exited").length;
+      setContainers({ running, stopped });
     } catch (error) {
       console.error(error);
     }
   };
 
   useEffect(() => {
-    fetchDataFromAPI({ all: true });
+    fetchData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const showLogs = async (containerId, containerName) => {
-    openConsole(containerName);
-
-    try {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_APIURL}${process.env.NEXT_PUBLIC_APIVERSION}/containers/${containerId}/logs?stdout=true&stderr=true&follow=true`
-      );
-      const reader = res.body.pipeThrough(new TextDecoderStream()).getReader();
-
-      while (true) {
-        const { value, done } = await reader.read();
-        if (done) {
-          break;
-        }
-        appendContent(value.split("\n"));
-      }
-    } catch (err) {
-      toast({
-        title: "Something went wrong",
-        status: "error",
-        duration: 9000,
-        isClosable: true,
-      });
-    }
-  };
-
-  const pruneStoppedContainers = async () => {
-    try {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_APIURL}${process.env.NEXT_PUBLIC_APIVERSION}/containers/prune`,
-        {
-          method: "POST",
-        }
-      );
-
-      const { ContainersDeleted, SpaceReclaimed } = await res.json();
-      toast({
-        title: `${ContainersDeleted.length} containers removed`,
-        description: `${SpaceReclaimed} bytes of space reclaimed`,
-        status: "success",
-        duration: 9000,
-        isClosable: true,
-        position: "top",
-      });
-      fetchDataFromAPI({ exited: true });
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
   return (
     <Layout title="Dashboard">
-      <Console
-        isOpen={isOpen}
-        onOpen={onOpen}
-        onClose={onClose}
-        title={modalTitle}
+      <Box
+        maxW="sm"
+        borderWidth="1px"
+        borderRadius="lg"
+        overflow="hidden"
+        p={6}
       >
-        {modalContent}
-      </Console>
-
-      <Tabs variant="enclosed-colored">
-        <TabList>
-          <Tab>Running</Tab>
-          <Tab>Stopped</Tab>
-        </TabList>
-
-        <TabPanels pt={2}>
-          <TabPanel>
-            <DataTable
-              title="Running containers"
-              columns={tableTitles}
-              rows={data.running}
-              refreshData={() => fetchDataFromAPI()}
-              functions={[
-                {
-                  title: "Show Logs",
-                  onClick: showLogs,
-                  icon: <InfoOutlineIcon />,
-                },
-                {
-                  title: "Stop Container",
-                  onClick: stopContainer,
-                  icon: <DeleteIcon />,
-                  callback: () => {
-                    fetchDataFromAPI({ all: true });
-                  },
-                },
-              ]}
-            />
-          </TabPanel>
-          <TabPanel>
-            <DataTable
-              title="Stopped containers"
-              columns={tableTitles}
-              rows={data.exited}
-              refreshData={() => fetchDataFromAPI({ exited: true })}
-              deleteData={pruneStoppedContainers}
-              functions={[
-                {
-                  title: "Start Container",
-                  onClick: startContainer,
-                  icon: <CheckCircleIcon />,
-                  callback: () => {
-                    fetchDataFromAPI({ all: true });
-                  },
-                },
-                {
-                  title: "Remove Container",
-                  onClick: removeContainer,
-                  icon: <DeleteIcon />,
-                  callback: () => fetchDataFromAPI({ exited: true }),
-                },
-              ]}
-            />
-          </TabPanel>
-        </TabPanels>
-      </Tabs>
+        <Heading as="h3" size="md" color="blue.400" mb="2" fontWeight="normal">
+          <Link href="/docker/containers">
+            <a>
+              Containers <LinkIcon w={4} h={4} />
+            </a>
+          </Link>
+        </Heading>
+        <Text mt="1">
+          <CheckCircleIcon color="green" mr="2" />
+          {containers.running} running
+        </Text>
+        <Text mt="1">
+          <WarningIcon color="red" mr="2" />
+          {containers.stopped} stopped
+        </Text>
+      </Box>
     </Layout>
   );
 };
