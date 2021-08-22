@@ -8,6 +8,7 @@ import {
   MenuList,
   MenuItem,
   Button,
+  MenuDivider,
 } from "@chakra-ui/react";
 
 import { ChevronDownIcon } from "@chakra-ui/icons";
@@ -63,13 +64,16 @@ const DataTableRow = ({ data = {}, functions = [] }) => {
           </MenuButton>
           <MenuList>
             {functions.map((f, idx) => (
-              <MenuItem
-                key={idx}
-                icon={f.icon}
-                onClick={() => f.onClick(Id, Image, f.callback)}
-              >
-                {f.title}
-              </MenuItem>
+              <>
+                {f.separatorBefore && <MenuDivider />}
+                <MenuItem
+                  key={idx}
+                  icon={f.icon}
+                  onClick={() => f.onClick(Id, Image, f.callback)}
+                >
+                  {f.title}
+                </MenuItem>
+              </>
             ))}
           </MenuList>
         </Menu>

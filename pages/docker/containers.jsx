@@ -214,6 +214,7 @@ const Containers = () => {
                   onClick: removeContainer,
                   icon: <DeleteIcon />,
                   callback: () => fetchDataFromAPI({ exited: true }),
+                  separatorBefore: true,
                 },
               ]}
             />
