@@ -1,6 +1,5 @@
 - Docker API
   - https://docs.docker.com/engine/api/
-- Dockerizza
 - React Table
   - Righe espandibili con più informazioni
 - Breadcrumb
