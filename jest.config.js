@@ -5,6 +5,7 @@ module.exports = {
     "^pages(.*)$": "<rootDir>/pages$1",
     "^hooks(.*)$": "<rootDir>/hooks$1",
     "^utils(.*)$": "<rootDir>/utils$1",
+    "^config(.*)$": "<rootDir>/config$1",
   },
   testEnvironment: "jsdom",
 };
