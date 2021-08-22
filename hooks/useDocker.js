@@ -3,6 +3,17 @@ import { useToast } from "@chakra-ui/react";
 export const useDocker = () => {
   const toast = useToast();
 
+  const genericError = () => {
+    toast({
+      title: "Something went wrong",
+      status: "error",
+      duration: 9000,
+      isClosable: true,
+      position: "top",
+    });
+    return "KO";
+  };
+
   const listContainers = async (all = false, exited = false) => {
     const options = `${all || exited ? "all=true" : ""}${
       exited ? '&filters={"status":["exited"]}' : ""
@@ -20,39 +31,31 @@ export const useDocker = () => {
     }
   };
 
-  const executeCommand = async (
+  const executeContainerCommand = async (
     command,
+    method,
     containerId,
     containerName,
     callback
   ) => {
-    containerId = containerId.trim();
-
     try {
-      const res = await fetch(`/api/docker/${command.command}`, {
-        method: "POST",
-        body: JSON.stringify({ containerId, containerName }),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-
-      if (res.status !== 200) {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_APIURL}${
+          process.env.NEXT_PUBLIC_APIVERSION
+        }/containers/${containerId}${command ? `/${command}` : ""}`,
+        {
+          method: method,
+        }
+      );
+      if (res.status === 204) {
+        const msg =
+          command === "start"
+            ? "started"
+            : command === "stop"
+            ? "stopped"
+            : "removed";
         toast({
-          title: res.statusText,
-          status: "error",
-          duration: 9000,
-          isClosable: true,
-          position: "top",
-        });
-        return "KO";
-      }
-
-      const { result } = await res.json();
-
-      if (result.replaceAll("\n", "") === containerId) {
-        toast({
-          title: `Container ${containerName} ${command.resok}.`,
+          title: `Container ${containerName} ${msg}.`,
           status: "success",
           duration: 9000,
           isClosable: true,
@@ -61,22 +64,17 @@ export const useDocker = () => {
         callback();
         return "OK";
       }
-    } catch (err) {
-      console.error(err);
-      toast({
-        title: "Something went wrong",
-        status: "error",
-        duration: 9000,
-        isClosable: true,
-        position: "top",
-      });
-      return "KO";
+      return genericError();
+    } catch (error) {
+      console.error(error);
+      return genericError();
     }
   };
 
   const startContainer = async (containerId, containerName, callback) => {
-    return await executeCommand(
-      { command: "start", resok: "started" },
+    return await executeContainerCommand(
+      "start",
+      "POST",
       containerId,
       containerName,
       callback
@@ -84,8 +82,9 @@ export const useDocker = () => {
   };
 
   const stopContainer = async (containerId, containerName, callback) => {
-    return await executeCommand(
-      { command: "stop", resok: "stopped" },
+    return await executeContainerCommand(
+      "stop",
+      "POST",
       containerId,
       containerName,
       callback
@@ -93,8 +92,9 @@ export const useDocker = () => {
   };
 
   const removeContainer = async (containerId, containerName, callback) => {
-    return await executeCommand(
-      { command: "rm", resok: "removed" },
+    return await executeContainerCommand(
+      "",
+      "DELETE",
       containerId,
       containerName,
       callback
