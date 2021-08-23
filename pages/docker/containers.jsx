@@ -42,8 +42,8 @@ const Containers = () => {
     "Image",
     "Created",
     "Status",
+    "IP",
     "Ports",
-    "Names",
   ];
 
   const fetchDataFromAPI = async (all = false, exited = false) => {

@@ -41,8 +41,6 @@ const DataTable = ({
   const onClose = () => setIsOpen(false);
   const cancelRef = useRef();
 
-  console.log(rows);
-
   const titles = useMemo(() => {
     const tmp = [];
     tmp.push({
@@ -71,7 +69,15 @@ const DataTable = ({
     const tmp = [];
     rows.forEach((row, idx) => {
       const Id = row.Id.substring(0, 12);
-      const { Image, Created, Status, Ports, Names, State } = row;
+      const {
+        Image,
+        Created,
+        Status,
+        Ports,
+        NetworkSettings,
+        HostConfig,
+        State,
+      } = row;
 
       const currRow = {};
       currRow.col1 = (
@@ -93,7 +99,8 @@ const DataTable = ({
       currRow.col3 = Image;
       currRow.col4 = getElapsedTime(Created);
       currRow.col5 = Status;
-      currRow.col6 = Ports.map((port, idx) => {
+      currRow.col6 = NetworkSettings.Networks[HostConfig.NetworkMode].IPAddress;
+      currRow.col7 = Ports.map((port, idx) => {
         const { Type, PrivatePort, PublicPort } = port;
         return (
           <Text key={idx}>{`${Type}:${PrivatePort}${
@@ -101,7 +108,6 @@ const DataTable = ({
           }`}</Text>
         );
       });
-      currRow.col7 = Names.join(",");
       currRow.col8 = (
         <Menu>
           <MenuButton
