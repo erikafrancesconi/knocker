@@ -1,11 +1,6 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useMemo } from "react";
 
 import {
-  Table,
-  Thead,
-  Tbody,
-  Tr,
-  Th,
   Heading,
   Flex,
   Box,
@@ -18,9 +13,21 @@ import {
   AlertDialogHeader,
   AlertDialogContent,
   AlertDialogOverlay,
+  Text,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
+  MenuDivider,
 } from "@chakra-ui/react";
+import {
+  ChevronDownIcon,
+  TriangleDownIcon,
+  TriangleUpIcon,
+} from "@chakra-ui/icons";
 
-import { DataTableRow } from "components";
+import { getElapsedTime } from "utils/client";
+import AdvancedTable from "./AdvancedTable";
 
 const DataTable = ({
   title,
@@ -33,6 +40,106 @@ const DataTable = ({
   const [isOpen, setIsOpen] = useState(false);
   const onClose = () => setIsOpen(false);
   const cancelRef = useRef();
+
+  console.log(rows);
+
+  const titles = useMemo(() => {
+    const tmp = [];
+    tmp.push({
+      Header: "",
+      id: "expander",
+      Cell: function RowExpander({ row }) {
+        return (
+          <span {...row.getToggleRowExpandedProps()}>
+            {row.isExpanded ? <TriangleUpIcon /> : <TriangleDownIcon />}
+          </span>
+        );
+      },
+    });
+    tmp.push({ Header: "", accessor: "col1" });
+    columns.forEach((column, idx) => {
+      tmp.push({
+        Header: column,
+        accessor: `col${idx + 2}`,
+      });
+    });
+    tmp.push({ Header: "", accessor: `col${tmp.length}` });
+    return tmp;
+  }, [columns]);
+
+  const data = useMemo(() => {
+    const tmp = [];
+    rows.forEach((row, idx) => {
+      const Id = row.Id.substring(0, 12);
+      const { Image, Created, Status, Ports, Names, State } = row;
+
+      const currRow = {};
+      currRow.col1 = (
+        <Box
+          display="inline-block"
+          width={6}
+          height={6}
+          borderRadius="full"
+          backgroundColor={
+            State === "running"
+              ? "green.400"
+              : State === "exited"
+              ? "red.400"
+              : "yellow.400"
+          }
+        ></Box>
+      );
+      currRow.col2 = Id;
+      currRow.col3 = Image;
+      currRow.col4 = getElapsedTime(Created);
+      currRow.col5 = Status;
+      currRow.col6 = Ports.map((port, idx) => {
+        const { Type, PrivatePort, PublicPort } = port;
+        return (
+          <Text key={idx}>{`${Type}:${PrivatePort}${
+            typeof PublicPort !== "undefined" ? `->${PublicPort}` : ""
+          }`}</Text>
+        );
+      });
+      currRow.col7 = Names.join(",");
+      currRow.col8 = (
+        <Menu>
+          <MenuButton
+            as={Button}
+            rightIcon={<ChevronDownIcon />}
+            colorScheme="blue"
+            size="xs"
+          >
+            Actions
+          </MenuButton>
+          <MenuList>
+            {functions.map((f, idx) => (
+              <>
+                {f.separatorBefore && <MenuDivider />}
+                <MenuItem
+                  key={idx}
+                  icon={f.icon}
+                  onClick={() => f.onClick(Id, Image, f.callback)}
+                >
+                  {f.title}
+                </MenuItem>
+              </>
+            ))}
+          </MenuList>
+        </Menu>
+      );
+      tmp.push(currRow);
+    });
+    return tmp;
+  }, [rows, functions]);
+
+  const expandedData = useMemo(() => {
+    const tmpObj = {};
+    rows.forEach((row) => {
+      tmpObj[row.Id.substring(0, 12)] = { ...row };
+    });
+    return tmpObj;
+  }, [rows]);
 
   let btnDelete = null;
   if (deleteData) {
@@ -132,22 +239,11 @@ const DataTable = ({
         </Box>
       </Flex>
       <Box py={4}>
-        <Table variant="striped" size="sm">
-          <Thead borderTopColor="gray.100" borderTopWidth={0.5}>
-            <Tr>
-              <Th p={6}></Th>
-              {columns.length > 0 &&
-                columns.map((h, idx) => <Th key={idx}>{h}</Th>)}
-              <Th></Th>
-            </Tr>
-          </Thead>
-          <Tbody>
-            {rows.length > 0 &&
-              rows.map((d, idx) => (
-                <DataTableRow key={idx} data={d} functions={functions} />
-              ))}
-          </Tbody>
-        </Table>
+        <AdvancedTable
+          columns={titles}
+          data={data}
+          expandedData={expandedData}
+        />
       </Box>
     </>
   );
