@@ -160,31 +160,31 @@ const Containers = () => {
                     fetchDataFromAPI({ all: true });
                   },
                 },
-                {
-                  title: "Inspect",
-                  onClick: () => {},
-                  icon: <QuestionOutlineIcon />,
-                },
-                {
-                  title: "Export",
-                  onClick: () => {},
-                  icon: <QuestionOutlineIcon />,
-                },
-                {
-                  title: "Stats",
-                  onClick: () => {},
-                  icon: <QuestionOutlineIcon />,
-                },
-                {
-                  title: "Restart",
-                  onClick: () => {},
-                  icon: <QuestionOutlineIcon />,
-                },
-                {
-                  title: "Attach Shell",
-                  onClick: () => {},
-                  icon: <QuestionOutlineIcon />,
-                },
+                // {
+                //   title: "Inspect",
+                //   onClick: () => {},
+                //   icon: <QuestionOutlineIcon />,
+                // },
+                // {
+                //   title: "Export",
+                //   onClick: () => {},
+                //   icon: <QuestionOutlineIcon />,
+                // },
+                // {
+                //   title: "Stats",
+                //   onClick: () => {},
+                //   icon: <QuestionOutlineIcon />,
+                // },
+                // {
+                //   title: "Restart",
+                //   onClick: () => {},
+                //   icon: <QuestionOutlineIcon />,
+                // },
+                // {
+                //   title: "Attach Shell",
+                //   onClick: () => {},
+                //   icon: <QuestionOutlineIcon />,
+                // },
               ]}
             />
           </TabPanel>
