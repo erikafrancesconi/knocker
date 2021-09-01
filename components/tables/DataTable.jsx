@@ -101,13 +101,19 @@ const DataTable = ({
       currRow.col5 = Status;
       currRow.col6 =
         NetworkSettings.Networks[HostConfig.NetworkMode]?.IPAddress;
-      currRow.col7 = Ports.map((port, idx) => {
-        const { Type, PrivatePort, PublicPort } = port;
-        return (
-          <Text key={idx}>{`${Type}:${PrivatePort}${
-            typeof PublicPort !== "undefined" ? `->${PublicPort}` : ""
-          }`}</Text>
-        );
+
+      const uniquePorts = [
+        ...new Set(
+          Ports.map((port) => {
+            const { Type, PrivatePort, PublicPort } = port;
+            return `${Type}:${PrivatePort}${
+              typeof PublicPort !== "undefined" ? `->${PublicPort}` : ""
+            }`;
+          })
+        ),
+      ];
+      currRow.col7 = uniquePorts.map((port, idx) => {
+        return <Text key={idx}>{port}</Text>;
       });
       currRow.col8 = (
         <Menu>
