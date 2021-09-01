@@ -6,6 +6,18 @@ import { useDocker } from "hooks/useDocker";
 import { Layout, DataTable, Console } from "components";
 
 import {
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
+  Button,
+  Text,
+} from "@chakra-ui/react";
+
+import {
   useDisclosure,
   useToast,
   Tabs,
@@ -19,6 +31,7 @@ import {
   DeleteIcon,
   InfoOutlineIcon,
   QuestionOutlineIcon,
+  RepeatClockIcon,
 } from "@chakra-ui/icons";
 
 const Containers = () => {
@@ -28,9 +41,20 @@ const Containers = () => {
 
   const { openModal, modalContent, modalTitle, appendContent } = useModal();
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const {
+    isOpen: isModalOpen,
+    onOpen: onModalOpen,
+    onClose: onModalClose,
+  } = useDisclosure();
+  const [modal, setModal] = useState({ title: "", content: null });
 
-  const { listContainers, startContainer, stopContainer, removeContainer } =
-    useDocker();
+  const {
+    listContainers,
+    startContainer,
+    stopContainer,
+    removeContainer,
+    restartContainer,
+  } = useDocker();
 
   const openConsole = (title) => {
     openModal(title);
@@ -122,6 +146,25 @@ const Containers = () => {
     }
   };
 
+  const inspectContainer = async (containerId, containerName) => {
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_APIURL}${process.env.NEXT_PUBLIC_APIVERSION}/containers/${containerId}/json`
+      );
+      const result = await res.json();
+      console.log(result);
+      setModal({
+        title: containerName,
+        content: JSON.stringify(result, null, 2),
+      });
+      onModalOpen();
+      return result;
+    } catch (error) {
+      console.error(error);
+      return [];
+    }
+  };
+
   return (
     <Layout title="Containers">
       <Console
@@ -132,7 +175,30 @@ const Containers = () => {
       >
         {modalContent}
       </Console>
+      <Modal
+        blockScrollOnMount={false}
+        isOpen={isModalOpen}
+        onClose={onModalClose}
+        scrollBehavior="inside"
+        size="full"
+      >
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>{modal.title}</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody fontFamily="monospace" fontSize="xs">
+            <pre>
+              <Text>{modal.content}</Text>
+            </pre>
+          </ModalBody>
 
+          <ModalFooter>
+            <Button colorScheme="blue" mr={3} onClick={onModalClose}>
+              Close
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
       <Tabs variant="enclosed-colored">
         <TabList>
           <Tab>Running</Tab>
@@ -148,6 +214,16 @@ const Containers = () => {
               refreshData={() => fetchDataFromAPI()}
               functions={[
                 {
+                  title: "Inspect",
+                  onClick: inspectContainer,
+                  icon: <QuestionOutlineIcon />,
+                },
+                {
+                  title: "Restart",
+                  onClick: restartContainer,
+                  icon: <RepeatClockIcon />,
+                },
+                {
                   title: "View Logs",
                   onClick: showLogs,
                   icon: <InfoOutlineIcon />,
@@ -159,12 +235,8 @@ const Containers = () => {
                   callback: () => {
                     fetchDataFromAPI({ all: true });
                   },
+                  separatorBefore: true,
                 },
-                // {
-                //   title: "Inspect",
-                //   onClick: () => {},
-                //   icon: <QuestionOutlineIcon />,
-                // },
                 // {
                 //   title: "Export",
                 //   onClick: () => {},
@@ -172,11 +244,6 @@ const Containers = () => {
                 // },
                 // {
                 //   title: "Stats",
-                //   onClick: () => {},
-                //   icon: <QuestionOutlineIcon />,
-                // },
-                // {
-                //   title: "Restart",
                 //   onClick: () => {},
                 //   icon: <QuestionOutlineIcon />,
                 // },

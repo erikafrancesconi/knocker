@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, Fragment } from "react";
 
 import { useTable, useExpanded, useSortBy } from "react-table";
 
@@ -63,8 +63,8 @@ const AdvancedTable = ({ columns, data, expandedData }) => {
         {rows.map((row, idx) => {
           prepareRow(row);
           return (
-            <>
-              <Tr key={idx} {...row.getRowProps()}>
+            <Fragment key={idx}>
+              <Tr {...row.getRowProps()}>
                 {row.cells.map((cell, idx1) => (
                   <Td
                     key={idx1}
@@ -82,7 +82,7 @@ const AdvancedTable = ({ columns, data, expandedData }) => {
                   </Td>
                 </Tr>
               ) : null}
-            </>
+            </Fragment>
           );
         })}
       </Tbody>

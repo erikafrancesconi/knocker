@@ -99,7 +99,8 @@ const DataTable = ({
       currRow.col3 = Image;
       currRow.col4 = getElapsedTime(Created);
       currRow.col5 = Status;
-      currRow.col6 = NetworkSettings.Networks[HostConfig.NetworkMode].IPAddress;
+      currRow.col6 =
+        NetworkSettings.Networks[HostConfig.NetworkMode]?.IPAddress;
       currRow.col7 = Ports.map((port, idx) => {
         const { Type, PrivatePort, PublicPort } = port;
         return (

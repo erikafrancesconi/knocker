@@ -1,7 +1,5 @@
 - Docker API
   - https://docs.docker.com/engine/api/
-- React Table
-  - Righe espandibili con più informazioni
 - Breadcrumb
 - Better icons
 - Tests

@@ -1,4 +1,3 @@
-import { useRef } from "react";
 import { useToast } from "@chakra-ui/react";
 
 export const useDocker = () => {
@@ -44,6 +43,8 @@ export const useDocker = () => {
         ? "Starting"
         : command === "stop"
         ? "Stopping"
+        : command === "restart"
+        ? "Restarting"
         : "Removing";
     toast({
       title: `${progressMsg} container ${containerName}...`,
@@ -67,6 +68,8 @@ export const useDocker = () => {
             ? "started"
             : command === "stop"
             ? "stopped"
+            : command === "restart"
+            ? "restarted"
             : "removed";
         toast({
           title: `Container ${containerName} ${msg}.`,
@@ -75,7 +78,10 @@ export const useDocker = () => {
           isClosable: true,
           position: "top",
         });
-        callback();
+
+        if (typeof callback !== "undefined") {
+          callback();
+        }
         return "OK";
       }
       return genericError();
@@ -115,10 +121,21 @@ export const useDocker = () => {
     );
   };
 
+  const restartContainer = async (containerId, containerName, callback) => {
+    return await executeContainerCommand(
+      "restart",
+      "POST",
+      containerId,
+      containerName,
+      callback
+    );
+  };
+
   return {
     listContainers,
     startContainer,
     stopContainer,
     removeContainer,
+    restartContainer,
   };
 };
