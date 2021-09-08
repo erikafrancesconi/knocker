@@ -167,6 +167,22 @@ const Containers = () => {
     }
   };
 
+  const attachShell = async (containerId) => {
+    const type = "text/plain";
+    const text = `docker exec -it ${containerId} sh`;
+    const blob = new Blob([text], { type });
+    const data = [new ClipboardItem({ [type]: blob })];
+    await navigator.clipboard.write(data);
+    toast({
+      title:
+        "Command has been copied to your clipboard. Just paste in a shell. Type exit in the shell when you are done.",
+      status: "info",
+      duration: 9000,
+      isClosable: true,
+      position: "top",
+    });
+  };
+
   return (
     <Layout title="Containers">
       <Console
@@ -215,11 +231,11 @@ const Containers = () => {
               rows={data.running}
               refreshData={() => fetchDataFromAPI()}
               functions={[
-                // {
-                //   title: "Attach Shell",
-                //   onClick: () => {},
-                //   icon: <AttachmentIcon />,
-                // },
+                {
+                  title: "Attach Shell",
+                  onClick: attachShell,
+                  icon: <AttachmentIcon />,
+                },
                 {
                   title: "Inspect",
                   onClick: inspectContainer,
@@ -244,17 +260,6 @@ const Containers = () => {
                   },
                   separatorBefore: true,
                 },
-                // {
-                //   title: "Export",
-                //   onClick: () => {},
-                //   icon: <QuestionOutlineIcon />,
-                // },
-                // {
-                //   title: "Stats",
-                //   onClick: () => {},
-                //   icon: <QuestionOutlineIcon />,
-                // },
-                // {
               ]}
             />
           </TabPanel>
