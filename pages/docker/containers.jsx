@@ -22,6 +22,7 @@ import {
   InfoOutlineIcon,
   RepeatClockIcon,
 } from "@chakra-ui/icons";
+import { copyToClipboard } from "utils/client";
 
 const Containers = () => {
   const [data, setData] = useState({ running: [], exited: [] });
@@ -130,13 +131,10 @@ const Containers = () => {
   };
 
   const attachShell = async (containerId) => {
-    const type = "text/plain";
-    const text = `docker exec -it ${containerId} sh`;
-    const blob = new Blob([text], { type });
-    const data = [new ClipboardItem({ [type]: blob })];
-    await navigator.clipboard.write(data);
+    await copyToClipboard(`docker exec -it ${containerId} sh`);
     toast({
-      title:
+      title: "Copied!",
+      description:
         "Command has been copied to your clipboard. Just paste in a shell. Type exit in the shell when you are done.",
       status: "info",
       duration: 9000,
