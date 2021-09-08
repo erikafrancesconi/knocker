@@ -15,6 +15,14 @@ export const getElapsedTime = (unixTimestamp) => {
   return `${Math.floor(seconds / 60 / 60)} hours ago`;
 };
 
+export const readableDate = (date) => {
+  const dateParts = new Date(date).toISOString().split("T");
+  return `${dateParts[0]} ${dateParts[1].substring(
+    0,
+    dateParts[1].indexOf(".")
+  )}`;
+};
+
 export const copyToClipboard = async (text) => {
   const type = "text/plain";
   const blob = new Blob([text], { type });

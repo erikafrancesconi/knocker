@@ -31,6 +31,27 @@ export const useDocker = () => {
     }
   };
 
+  const listVolumes = async () => {
+    const data = { used: [], dangling: [] };
+    try {
+      let res = await fetch(
+        `${process.env.NEXT_PUBLIC_APIURL}${process.env.NEXT_PUBLIC_APIVERSION}/volumes?&filters={"dangling":["false"]}`
+      );
+      let result = await res.json();
+      data.used = result.Volumes;
+
+      res = await fetch(
+        `${process.env.NEXT_PUBLIC_APIURL}${process.env.NEXT_PUBLIC_APIVERSION}/volumes?&filters={"dangling":["true"]}`
+      );
+      result = await res.json();
+      data.dangling = result.Volumes;
+    } catch (error) {
+      console.error(error);
+      return [];
+    }
+    return data;
+  };
+
   const executeContainerCommand = async (
     command,
     method,
@@ -133,6 +154,7 @@ export const useDocker = () => {
 
   return {
     listContainers,
+    listVolumes,
     startContainer,
     stopContainer,
     removeContainer,

@@ -28,10 +28,10 @@ const navigation = [
         label: "Containers",
         href: "/docker/containers",
       },
-      // {
-      //   label: "Volumes",
-      //   href: "/docker/volumes",
-      // },
+      {
+        label: "Volumes",
+        href: "/docker/volumes",
+      },
     ],
   },
   { label: "Configurations", href: "/config" },
