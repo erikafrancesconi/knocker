@@ -1,45 +1,18 @@
 import { useState, useRef, useMemo } from "react";
 
-import {
-  Heading,
-  Flex,
-  Box,
-  Spacer,
-  Button,
-  Stack,
-  AlertDialog,
-  AlertDialogBody,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogContent,
-  AlertDialogOverlay,
-  Text,
-  Menu,
-  MenuButton,
-  MenuList,
-  MenuItem,
-  MenuDivider,
-} from "@chakra-ui/react";
-import {
-  ChevronDownIcon,
-  TriangleDownIcon,
-  TriangleUpIcon,
-} from "@chakra-ui/icons";
+import { Heading, Flex, Box, Spacer, Stack } from "@chakra-ui/react";
+import { TriangleDownIcon, TriangleUpIcon } from "@chakra-ui/icons";
 
-import AdvancedTable from "./AdvancedTable";
+import { Alert } from "components";
+import { AdvancedTable, GenericDataTableButtons, RowMenu, RowStatus } from "./";
 
-const GenericDataTable = ({
-  title,
-  columns = [],
-  rows = [],
-  refreshData = () => {},
-  additionalButtons = [],
-  functions = [],
-  rowId,
-  rowName,
-  rowState = () => {},
-}) => {
-  // Stato per gli alert
+const GenericDataTable = (props) => {
+  const { columns = [], rows = [], functions = [] } = props;
+  const { refreshData = () => {}, additionalButtons = [] } = props;
+  const { rowId, rowName, rowState = () => {} } = props;
+  const { title } = props;
+
+  // Configurazioni per gli alert
   const [isOpen, setIsOpen] = useState(false);
   const onClose = () => setIsOpen(false);
   const cancelRef = useRef();
@@ -94,21 +67,7 @@ const GenericDataTable = ({
         Name = row[rowName] || row[rowId];
 
       const currRow = {};
-      currRow.col1 = (
-        <Box
-          display="inline-block"
-          width={6}
-          height={6}
-          borderRadius="full"
-          backgroundColor={
-            rowState() === "running"
-              ? "green.400"
-              : rowState() === "exited"
-              ? "red.400"
-              : "yellow.400"
-          }
-        ></Box>
-      );
+      currRow.col1 = <RowStatus rowState={rowState} />;
 
       let idx1 = 2;
       for (const column in columns) {
@@ -119,40 +78,7 @@ const GenericDataTable = ({
       }
 
       currRow[`col${idx1}`] = (
-        <Menu>
-          <MenuButton
-            as={Button}
-            rightIcon={<ChevronDownIcon />}
-            colorScheme="blue"
-            size="xs"
-          >
-            Actions
-          </MenuButton>
-          <MenuList>
-            {functions.map((f, idx) => (
-              <>
-                {f.separatorBefore && <MenuDivider />}
-                <MenuItem
-                  key={idx}
-                  icon={f.icon}
-                  onClick={() =>
-                    f.onClick(
-                      Id,
-                      Name,
-                      f.callback
-                        ? () => {
-                            console.log("Callback");
-                          }
-                        : () => {}
-                    )
-                  }
-                >
-                  {f.title}
-                </MenuItem>
-              </>
-            ))}
-          </MenuList>
-        </Menu>
+        <RowMenu functions={functions} confirmAndRun={confirmAndRun} />
       );
       tmp.push(currRow);
     });
@@ -175,69 +101,18 @@ const GenericDataTable = ({
         </Heading>
         <Spacer />
         <Box>
-          <AlertDialog
+          <Alert
             isOpen={isOpen}
-            leastDestructiveRef={cancelRef}
+            cancelRef={cancelRef}
             onClose={onClose}
-            isCentered={true}
-          >
-            <AlertDialogOverlay>
-              <AlertDialogContent>
-                <AlertDialogHeader fontSize="lg" fontWeight="bold">
-                  {alertData.title}
-                </AlertDialogHeader>
-                <AlertDialogBody>{alertData.body}</AlertDialogBody>
-                <AlertDialogFooter>
-                  <Button ref={cancelRef} onClick={onClose}>
-                    Cancel
-                  </Button>
-                  <Button colorScheme="red" onClick={alertData.action} ml={3}>
-                    {alertData.actionTitle}
-                  </Button>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialogOverlay>
-          </AlertDialog>
+            alertData={alertData}
+          />
           <Stack direction="row" spacing={4} align="center">
-            <Button
-              colorScheme="green"
-              title="Refresh"
-              onClick={refreshData}
-              size="sm"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="1.5rem"
-                height="1.5rem"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-                />
-              </svg>
-            </Button>
-            {additionalButtons.map((button, idx) => {
-              return (
-                <Button
-                  key={idx}
-                  colorScheme={button.color}
-                  title={button.title}
-                  onClick={
-                    button.confirm
-                      ? () => confirmAndRun(button.confirmData)
-                      : button.action()
-                  }
-                  size="sm"
-                >
-                  {button.icon}
-                </Button>
-              );
-            })}
+            <GenericDataTableButtons
+              refreshData={refreshData}
+              additionalButtons={additionalButtons}
+              confirmAndRun={confirmAndRun}
+            />
           </Stack>
         </Box>
       </Flex>

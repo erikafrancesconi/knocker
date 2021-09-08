@@ -7,7 +7,6 @@ const Page = ({ title, tabs, fetchFunction = async () => {}, rowId }) => {
 
   const fetchData = async () => {
     const result = await fetchFunction();
-    console.log(result);
     setData(result);
   };
 

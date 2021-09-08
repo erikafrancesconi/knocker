@@ -1,0 +1,42 @@
+import {
+  Button,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
+  MenuDivider,
+} from "@chakra-ui/react";
+import { ChevronDownIcon } from "@chakra-ui/icons";
+
+const RowMenu = ({ functions, confirmAndRun }) => {
+  return (
+    <Menu>
+      <MenuButton
+        as={Button}
+        rightIcon={<ChevronDownIcon />}
+        colorScheme="blue"
+        size="xs"
+      >
+        Actions
+      </MenuButton>
+      <MenuList>
+        {functions.map((f, idx) => (
+          <>
+            {f.separatorBefore && <MenuDivider />}
+            <MenuItem
+              key={idx}
+              icon={f.icon}
+              onClick={
+                f.confirm ? () => confirmAndRun(f.confirmData) : f.onClick
+              }
+            >
+              {f.title}
+            </MenuItem>
+          </>
+        ))}
+      </MenuList>
+    </Menu>
+  );
+};
+
+export default RowMenu;
