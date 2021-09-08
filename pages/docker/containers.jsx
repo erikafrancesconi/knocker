@@ -27,11 +27,13 @@ import {
   TabPanel,
 } from "@chakra-ui/react";
 import {
+  AttachmentIcon,
   CheckCircleIcon,
+  CopyIcon,
   DeleteIcon,
   InfoOutlineIcon,
-  QuestionOutlineIcon,
   RepeatClockIcon,
+  ViewIcon,
 } from "@chakra-ui/icons";
 
 const Containers = () => {
@@ -213,10 +215,15 @@ const Containers = () => {
               rows={data.running}
               refreshData={() => fetchDataFromAPI()}
               functions={[
+                // {
+                //   title: "Attach Shell",
+                //   onClick: () => {},
+                //   icon: <AttachmentIcon />,
+                // },
                 {
                   title: "Inspect",
                   onClick: inspectContainer,
-                  icon: <QuestionOutlineIcon />,
+                  icon: <ViewIcon />,
                 },
                 {
                   title: "Restart",
@@ -226,7 +233,7 @@ const Containers = () => {
                 {
                   title: "View Logs",
                   onClick: showLogs,
-                  icon: <InfoOutlineIcon />,
+                  icon: <CopyIcon />,
                 },
                 {
                   title: "Stop Container",
@@ -248,10 +255,6 @@ const Containers = () => {
                 //   icon: <QuestionOutlineIcon />,
                 // },
                 // {
-                //   title: "Attach Shell",
-                //   onClick: () => {},
-                //   icon: <QuestionOutlineIcon />,
-                // },
               ]}
             />
           </TabPanel>
