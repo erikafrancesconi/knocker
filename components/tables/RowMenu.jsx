@@ -1,3 +1,4 @@
+import { Fragment } from "react";
 import {
   Button,
   Menu,
@@ -21,10 +22,9 @@ const RowMenu = ({ rowId, rowName, functions, confirmAndRun }) => {
       </MenuButton>
       <MenuList>
         {functions.map((f, idx) => (
-          <>
+          <Fragment key={idx}>
             {f.separatorBefore && <MenuDivider />}
             <MenuItem
-              key={idx}
               icon={f.icon}
               onClick={
                 f.confirm
@@ -34,7 +34,7 @@ const RowMenu = ({ rowId, rowName, functions, confirmAndRun }) => {
             >
               {f.title}
             </MenuItem>
-          </>
+          </Fragment>
         ))}
       </MenuList>
     </Menu>

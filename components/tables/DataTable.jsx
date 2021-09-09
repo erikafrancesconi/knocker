@@ -1,4 +1,4 @@
-import { useState, useRef, useMemo } from "react";
+import { useState, useRef, useMemo, Fragment } from "react";
 
 import {
   Heading,
@@ -127,16 +127,15 @@ const DataTable = ({
           </MenuButton>
           <MenuList>
             {functions.map((f, idx) => (
-              <>
+              <Fragment key={idx}>
                 {f.separatorBefore && <MenuDivider />}
                 <MenuItem
-                  key={idx}
                   icon={f.icon}
                   onClick={() => f.onClick(Id, Image, f.callback)}
                 >
                   {f.title}
                 </MenuItem>
-              </>
+              </Fragment>
             ))}
           </MenuList>
         </Menu>
