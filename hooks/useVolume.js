@@ -58,9 +58,7 @@ export const useVolume = () => {
       body: "Are you sure you want to remove this volume? Removing volumes may result in data loss!",
       actionTitle: "Remove",
       action: removeVolume,
-      callback: () => {
-        console.log("callback!!");
-      },
+      callback: () => {},
     },
   };
 
