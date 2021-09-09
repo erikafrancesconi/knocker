@@ -52,6 +52,20 @@ export const useDocker = () => {
     return data;
   };
 
+  const inspectVolume = async (name) => {
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_APIURL}${process.env.NEXT_PUBLIC_APIVERSION}/volumes/${name}`
+      );
+      const result = await res.json();
+      console.log(result);
+      return result;
+    } catch (error) {
+      console.error(error);
+      return [];
+    }
+  };
+
   const executeContainerCommand = async (
     command,
     method,
@@ -159,5 +173,6 @@ export const useDocker = () => {
     stopContainer,
     removeContainer,
     restartContainer,
+    inspectVolume,
   };
 };

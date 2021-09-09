@@ -1,7 +1,10 @@
 import { ViewIcon, DeleteIcon } from "@chakra-ui/icons";
 import { readableDate } from "utils/client";
+import { useDocker } from "hooks/useDocker";
 
 export const useVolume = () => {
+  const { inspectVolume } = useDocker();
+
   const columns = {
     Name: {},
     CreatedAt: { title: "Created", formatter: readableDate },
@@ -42,9 +45,7 @@ export const useVolume = () => {
 
   const menuInspect = {
     title: "Inspect",
-    onClick: () => {
-      console.log("Inspect");
-    },
+    onClick: inspectVolume,
     icon: <ViewIcon />,
   };
 

@@ -8,7 +8,7 @@ import {
 } from "@chakra-ui/react";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 
-const RowMenu = ({ functions, confirmAndRun }) => {
+const RowMenu = ({ rowId, rowName, functions, confirmAndRun }) => {
   return (
     <Menu>
       <MenuButton
@@ -27,7 +27,9 @@ const RowMenu = ({ functions, confirmAndRun }) => {
               key={idx}
               icon={f.icon}
               onClick={
-                f.confirm ? () => confirmAndRun(f.confirmData) : f.onClick
+                f.confirm
+                  ? () => confirmAndRun(f.confirmData)
+                  : () => f.onClick(rowId, rowName)
               }
             >
               {f.title}

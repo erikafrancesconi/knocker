@@ -4,7 +4,7 @@ import { useVolume } from "hooks/useVolume";
 
 const Volumes = () => {
   const { listVolumes } = useDocker();
-  const { columns, btnDelete, menuInspect, menuRemove } = useVolume();
+  const { columns, btnDelete, menuRemove } = useVolume();
 
   return (
     <Page
@@ -17,7 +17,6 @@ const Volumes = () => {
           title: "Used volumes",
           columns: columns,
           rowState: () => "running",
-          functions: [menuInspect],
         },
         {
           tabTitle: "Dangling",

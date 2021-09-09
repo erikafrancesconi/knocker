@@ -77,9 +77,17 @@ const GenericDataTable = (props) => {
         idx1++;
       }
 
-      currRow[`col${idx1}`] = (
-        <RowMenu functions={functions} confirmAndRun={confirmAndRun} />
-      );
+      if (functions.length) {
+        currRow[`col${idx1}`] = (
+          <RowMenu
+            rowId={Id}
+            rowName={Name}
+            functions={functions}
+            confirmAndRun={confirmAndRun}
+          />
+        );
+      }
+
       tmp.push(currRow);
     });
     return tmp;
