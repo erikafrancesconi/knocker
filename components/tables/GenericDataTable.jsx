@@ -1,6 +1,6 @@
 import { useState, useRef, useMemo } from "react";
 
-import { Heading, Flex, Box, Spacer, Stack } from "@chakra-ui/react";
+import { Heading, Flex, Box, Spacer, Stack, Text } from "@chakra-ui/react";
 import { TriangleDownIcon, TriangleUpIcon } from "@chakra-ui/icons";
 
 import { Alert } from "components";
@@ -105,7 +105,7 @@ const GenericDataTable = (props) => {
     <>
       <Flex>
         <Heading as="h3" size="md" color="blue.400" fontWeight="normal">
-          {title}
+          {`${title} (${rows.length})`}
         </Heading>
         <Spacer />
         <Box>
