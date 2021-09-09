@@ -28,7 +28,7 @@ const RowMenu = ({ rowId, rowName, functions, confirmAndRun }) => {
               icon={f.icon}
               onClick={
                 f.confirm
-                  ? () => confirmAndRun(f.confirmData)
+                  ? () => confirmAndRun(f.confirmData, rowName)
                   : () => f.onClick(rowId, rowName)
               }
             >

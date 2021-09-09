@@ -56,7 +56,7 @@ export const useVolume = () => {
     confirm: true,
     confirmData: {
       title: "Remove volume",
-      body: "Are you sure you want to remove volume ${Id}? Removing volumes may result in data loss!",
+      body: "Are you sure you want to remove this volume? Removing volumes may result in data loss!",
       actionTitle: "Remove",
       action: () => {
         console.log("Fake remove");

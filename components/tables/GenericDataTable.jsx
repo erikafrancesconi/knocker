@@ -22,8 +22,8 @@ const GenericDataTable = (props) => {
     actionTitle: "",
     action: () => {},
   });
-  const confirmAndRun = (data) => {
-    setAlertData({ ...data });
+  const confirmAndRun = (data, description) => {
+    setAlertData({ ...data, title: `${data.title} ${description}` });
     setIsOpen(true);
   };
 
