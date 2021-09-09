@@ -8,6 +8,7 @@ import MobileNav from "./nav/MobileNav";
 import Console from "./Console";
 import ConfigRow from "./ConfigRow";
 import Alert from "./Alert";
+import Widget from "./Widget";
 
 export {
   Layout,
@@ -20,4 +21,5 @@ export {
   Console,
   ConfigRow,
   Alert,
+  Widget,
 };
