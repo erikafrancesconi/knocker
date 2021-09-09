@@ -66,6 +66,23 @@ export const useDocker = () => {
     }
   };
 
+  const removeVolume = async (name) => {
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_APIURL}${process.env.NEXT_PUBLIC_APIVERSION}/volumes/${name}`,
+        {
+          method: "DELETE",
+        }
+      );
+      if (res.status === 204) {
+        return true;
+      }
+    } catch (error) {
+      console.error(error);
+    }
+    return false;
+  };
+
   const executeContainerCommand = async (
     command,
     method,
@@ -174,5 +191,6 @@ export const useDocker = () => {
     removeContainer,
     restartContainer,
     inspectVolume,
+    removeVolume,
   };
 };

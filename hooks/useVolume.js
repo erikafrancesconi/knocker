@@ -3,7 +3,7 @@ import { readableDate } from "utils/client";
 import { useDocker } from "hooks/useDocker";
 
 export const useVolume = () => {
-  const { inspectVolume } = useDocker();
+  const { inspectVolume, removeVolume } = useDocker();
 
   const columns = {
     Name: {},
@@ -52,14 +52,14 @@ export const useVolume = () => {
   const menuRemove = {
     title: "Remove",
     icon: <DeleteIcon />,
-    callback: true,
     confirm: true,
     confirmData: {
       title: "Remove volume",
       body: "Are you sure you want to remove this volume? Removing volumes may result in data loss!",
       actionTitle: "Remove",
-      action: () => {
-        console.log("Fake remove");
+      action: removeVolume,
+      callback: () => {
+        console.log("callback!!");
       },
     },
   };

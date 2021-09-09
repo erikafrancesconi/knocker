@@ -17,13 +17,15 @@ const GenericDataTable = (props) => {
   const onClose = () => setIsOpen(false);
   const cancelRef = useRef();
   const [alertData, setAlertData] = useState({
+    id: "",
     title: "",
     body: "",
     actionTitle: "",
     action: () => {},
+    callback: () => {},
   });
-  const confirmAndRun = (data, description) => {
-    setAlertData({ ...data, title: `${data.title} ${description}` });
+  const confirmAndRun = (data, id) => {
+    setAlertData({ ...data, title: `${data.title} ${id}`, id });
     setIsOpen(true);
   };
 
